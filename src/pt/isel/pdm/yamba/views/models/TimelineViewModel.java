@@ -1,16 +1,31 @@
 package pt.isel.pdm.yamba.views.models;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class TimelineViewModel {
 
-	private List<TweetViewModel> _tweets; 
+	private ArrayList<TweetViewModel> _tweets; 
 	
-	public TimelineViewModel(List<TweetViewModel> tweets) {
+	public TimelineViewModel(ArrayList<TweetViewModel> tweets) {
 		_tweets = tweets;
 	}
+	
+	public TimelineViewModel(Iterable<TweetViewModel> tweets) {
+		if(tweets instanceof ArrayList) {
+			_tweets = (ArrayList<TweetViewModel>) tweets;
+		}
+		else {
+			ArrayList<TweetViewModel> t = new ArrayList<TweetViewModel>();
+			
+			for(TweetViewModel s : tweets) {
+				t.add(s);
+			}
+			
+			_tweets = t;
+		}
+	}
 
-	public List<TweetViewModel> getTweets() {
+	public ArrayList<TweetViewModel> getTweets() {
 		return _tweets;
 	}		
 }
