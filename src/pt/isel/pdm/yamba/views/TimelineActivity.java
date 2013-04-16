@@ -81,6 +81,7 @@ public class TimelineActivity extends Activity {
 	private TweetAdapter _adapter;
 	
 	private TimelineViewModel _viewModel;
+	private TimelineObtainedListener _timelineObtainedListener;
 	
 	private View _loading, _timeline;
 
@@ -91,7 +92,7 @@ public class TimelineActivity extends Activity {
         
         _connection = TwitterAsync.connect();
         
-        _connection.setTimelineObtainedListener(new TimelineObtainedListener() {
+        _connection.setTimelineObtainedListener(_timelineObtainedListener = new TimelineObtainedListener() {
 			        	
 			@Override
 			public void onTimelineObtained(Iterable<Status> timeline) {
