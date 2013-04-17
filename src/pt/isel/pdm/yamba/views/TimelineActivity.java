@@ -8,7 +8,7 @@ import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
-import pt.isel.pdm.yambapdm.R;
+import pt.isel.pdm.yamba.R;
 import winterwell.jtwitter.Twitter.Status;
 
 import android.os.Bundle;
