@@ -60,6 +60,7 @@ public class TweetDateFormat extends DateFormat {
 		return _formatYear;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public StringBuffer format(Date date, StringBuffer buffer, FieldPosition fieldPos) {
 					
