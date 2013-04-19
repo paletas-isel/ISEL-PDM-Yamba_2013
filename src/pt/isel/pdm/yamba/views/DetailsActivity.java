@@ -25,6 +25,8 @@ public class DetailsActivity extends Activity {
 		_tvTweet = (TextView) v.findViewById(R.id.details_tweet);
 		_tvDate = (TextView) v.findViewById(R.id.details_date);
 		_tvId = (TextView) v.findViewById(R.id.details_id);
+		
+		onNewIntent(getIntent());
 	}
 
 	/* (non-Javadoc)

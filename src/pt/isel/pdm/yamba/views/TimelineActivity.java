@@ -1,6 +1,8 @@
 package pt.isel.pdm.yamba.views;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import pt.isel.pdm.yamba.TweetDateFormat;
@@ -51,6 +53,13 @@ public class TimelineActivity extends Activity implements TimelineObtainedListen
 			}
 		}
 
+		private Date getElapsedTimeFrom(Date from) {
+			long publicationMillis = from.getTime();
+			long currentDateMillis = Calendar.getInstance().getTimeInMillis();
+			
+			return new Date(currentDateMillis - publicationMillis);
+		}
+		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			TweetViewModel tweet = getItem(position);
@@ -74,7 +83,7 @@ public class TimelineActivity extends Activity implements TimelineObtainedListen
 			
 			dataHolder.author.setText(tweet.getUsername());
 			dataHolder.status.setText(tweet.getTweet());
-			dataHolder.publicationTime.setText(_DateFormat.format(tweet.getTweetDate()));
+			dataHolder.publicationTime.setText(_DateFormat.format(getElapsedTimeFrom(tweet.getTweetDate())));
 			
 			return v;
 		}		
@@ -100,6 +109,7 @@ public class TimelineActivity extends Activity implements TimelineObtainedListen
         
         _timeline = list = (ListView) findViewById(R.id.timeline);
 		list.setAdapter(_adapter = new TweetAdapter());
+		list.setOnItemClickListener(this);
 		
 		_loading = findViewById(R.id.timeline_loading);
 		

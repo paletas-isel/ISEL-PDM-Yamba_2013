@@ -27,7 +27,7 @@
         </activity>
         <activity
             android:name="pt.isel.pdm.yamba.views.DetailsActivity"
-            android:label="@string/title_activity_details" >
+            android:label="@string/title_activity_details" android:launchMode="singleTask">
         </activity>
     </application>
 
