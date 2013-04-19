@@ -29,6 +29,14 @@
             android:name="pt.isel.pdm.yamba.views.DetailsActivity"
             android:label="@string/title_activity_details" >
         </activity>
+        <activity
+            android:name="pt.isel.pdm.yamba.views.StatusActivity"
+            android:label="@string/title_activity_status" >
+        </activity>
+        <activity
+            android:name="pt.isel.pdm.yamba.views.YambaBaseActivity"
+            android:label="@string/title_activity_yamba_base" >
+        </activity>
     </application>
 
 </manifest>

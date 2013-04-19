@@ -6,5 +6,8 @@
     <string name="loading">Loading &#8230;</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_status">StatusActivity</string>
+    <string name="status_send_text">Send</string>
+    <string name="title_activity_yamba_base">YambaBaseActivity</string>
 
 </resources>
