@@ -146,10 +146,4 @@ public class TimelineActivity extends Activity implements TimelineObtainedListen
 		intent.putExtra(DetailsActivity.TWEET_VIEW_PARAMETER, _viewModel.getTweets().get(arg2));
 		startActivity(intent);
 	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		startActivity(new Intent(this, StatusActivity.class));
-		return true;
-	}
 }
