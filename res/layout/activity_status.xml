@@ -9,29 +9,26 @@
     tools:context=".StatusActivity" >
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/status_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText1"
         android:layout_alignParentTop="true"
         android:layout_marginTop="36dp"
         android:text="@string/status_send_text" />
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/status_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:inputType="text"
         android:ems="10" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/status_remaining_characters"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/editText1"
-        android:layout_alignRight="@+id/editText1"
-        android:text="TextView" />
+        android:layout_height="wrap_content" 
+        android:textIsSelectable="true"/>
 
 </RelativeLayout>

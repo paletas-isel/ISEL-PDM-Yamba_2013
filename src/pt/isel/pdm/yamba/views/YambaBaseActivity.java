@@ -1,38 +1,62 @@
 package pt.isel.pdm.yamba.views;
 
-import pt.isel.pdm.yamba.MyMenuInflater;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import pt.isel.pdm.yamba.R;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 abstract class YambaBaseActivity extends Activity {
 	
+	private static final Map<Integer, Class<? extends Activity>> _activityMenuResMapper;
+	
+	static {
+		_activityMenuResMapper = new HashMap<Integer, Class<? extends Activity>>();
+		_activityMenuResMapper.put(R.id.action_status, StatusActivity.class);
+		_activityMenuResMapper.put(R.id.action_timeline, TimelineActivity.class);
+	}
+	
 	private final MenuInflater _menuInflater;
 	private final int _menuRes;
-	
 	private final Class<? extends YambaBaseActivity> _activity;
 	
-	protected YambaBaseActivity(Class<? extends YambaBaseActivity> activity) {
+	protected YambaBaseActivity(Class<? extends YambaBaseActivity> activity, int menuRes) {
 		this._activity = activity;
 		this._menuRes = menuRes;
-		this._menuInflater = new MyMenuInflater(this, super.getMenuInflater());
+		this._menuInflater = super.getMenuInflater();
 	}
 	
 	@Override
 	public final boolean onCreateOptionsMenu(Menu menu) {
 		
+		getMenuInflater().inflate(_menuRes, menu);
 		
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(_menuActivity.get(_activity), menu);
-				
+		int order = menu.size();
+		for(Entry<Integer, Class<? extends Activity>> entry : _activityMenuResMapper.entrySet()) {
+						
+			if(entry.getValue() != _activity)
+				menu.add(0, entry.getKey(), ++order, entry.getValue().getSimpleName());
+		}
+		
 		return true;
 	}
 
 	@Override
 	public final boolean onOptionsItemSelected(MenuItem item) {
 		
-		return true;
+		final int itemId = item.getItemId();
+		
+		if(_activityMenuResMapper.containsKey(itemId)) {
+			startActivity(new Intent(this, _activityMenuResMapper.get(itemId)));
+			return true;
+		}
+		
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
