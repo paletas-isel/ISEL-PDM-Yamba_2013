@@ -8,7 +8,6 @@ import pt.isel.pdm.yamba.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 abstract class YambaBaseActivity extends Activity {
@@ -21,14 +20,12 @@ abstract class YambaBaseActivity extends Activity {
 		_activityMenuResMapper.put(R.id.action_timeline, TimelineActivity.class);
 	}
 	
-	private final MenuInflater _menuInflater;
 	private final int _menuRes;
 	private final Class<? extends YambaBaseActivity> _activity;
 	
 	protected YambaBaseActivity(Class<? extends YambaBaseActivity> activity, int menuRes) {
 		this._activity = activity;
 		this._menuRes = menuRes;
-		this._menuInflater = super.getMenuInflater();
 	}
 	
 	@Override
@@ -57,10 +54,5 @@ abstract class YambaBaseActivity extends Activity {
 		}
 		
 		return super.onOptionsItemSelected(item);
-	}
-	
-	@Override
-	public final MenuInflater getMenuInflater() {
-		return _menuInflater;
 	}
 }

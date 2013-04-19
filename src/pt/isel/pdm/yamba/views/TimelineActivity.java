@@ -12,11 +12,8 @@ import pt.isel.pdm.yamba.TwitterAsync.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
 import winterwell.jtwitter.Twitter.Status;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,7 +22,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class TimelineActivity extends Activity implements TimelineObtainedListener, OnItemClickListener {
+public class TimelineActivity extends YambaBaseActivity implements TimelineObtainedListener, OnItemClickListener {
+
+	public TimelineActivity() {
+		super(TimelineActivity.class, R.menu.timeline);
+	}
 
 	private static final TweetDateFormat _DateFormat = new TweetDateFormat();
 	
@@ -114,13 +115,6 @@ public class TimelineActivity extends Activity implements TimelineObtainedListen
 		_loading = findViewById(R.id.timeline_loading);
 		
 		refreshTimeline();
-    }
-
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.timeline, menu);
-        return true;
     }
     
 	private void refreshTimeline() {		

@@ -20,11 +20,10 @@ public class DetailsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_details);
 		
-		View v = getLayoutInflater().inflate(R.layout.activity_details, null);
-		_tvAuthor = (TextView) v.findViewById(R.id.details_author);
-		_tvTweet = (TextView) v.findViewById(R.id.details_tweet);
-		_tvDate = (TextView) v.findViewById(R.id.details_date);
-		_tvId = (TextView) v.findViewById(R.id.details_id);
+		_tvAuthor = (TextView) findViewById(R.id.details_author);
+		_tvTweet = (TextView) findViewById(R.id.details_tweet);
+		_tvDate = (TextView) findViewById(R.id.details_date);
+		_tvId = (TextView) findViewById(R.id.details_id);
 		
 		onNewIntent(getIntent());
 	}
@@ -46,10 +45,14 @@ public class DetailsActivity extends Activity {
 		return true;
 	}
 
-	private void showTweet(TweetViewModel model) {
-		_tvAuthor.setText(model.getUsername());
-		_tvTweet.setText(model.getTweet());
-		_tvDate.setText(model.getTweetDate().toString());
-		_tvId.setText(String.valueOf(model.getID()));
+	private void showTweet(final TweetViewModel model) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				_tvAuthor.setText(model.getUsername());
+				_tvTweet.setText(model.getTweet());
+				_tvDate.setText(model.getTweetDate().toString());
+				_tvId.setText(String.valueOf(model.getID()));				
+		}});
 	}
 }
