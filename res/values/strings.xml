@@ -9,5 +9,8 @@
     <string name="title_activity_status">StatusActivity</string>
     <string name="status_send_text">Send</string>
     <string name="title_activity_yamba_base">YambaBaseActivity</string>
+    <string name="tweet_author">Author</string>
+    <string name="tweet_date">Publication Date</string>
+    <string name="tweet_id">ID</string>
 
 </resources>

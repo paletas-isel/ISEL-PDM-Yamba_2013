@@ -13,14 +13,17 @@ import winterwell.jtwitter.Twitter.Status;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class TimelineActivity extends Activity {
+public class TimelineActivity extends Activity implements TimelineObtainedListener, OnItemClickListener {
 
 	private static final TweetDateFormat _DateFormat = new TweetDateFormat();
 	
@@ -81,7 +84,6 @@ public class TimelineActivity extends Activity {
 	private TweetAdapter _adapter;
 	
 	private TimelineViewModel _viewModel;
-	private TimelineObtainedListener _timelineObtainedListener;
 	
 	private View _loading, _timeline;
 
@@ -92,20 +94,7 @@ public class TimelineActivity extends Activity {
         
         _connection = TwitterAsync.connect();
         
-        _connection.setTimelineObtainedListener(_timelineObtainedListener = new TimelineObtainedListener() {
-			        	
-			@Override
-			public void onTimelineObtained(Iterable<Status> timeline) {
-				
-				List<TweetViewModel> tweets = new ArrayList<TweetViewModel>();
-				
-				for(Status s : timeline) {
-					tweets.add(new TweetViewModel(s.text, s.user.name, s.createdAt));
-				}
-				
-				updateViewModel(tweets);
-			}
-		});
+        _connection.setTimelineObtainedListener(this);
         
         ListView list;
         
@@ -136,5 +125,25 @@ public class TimelineActivity extends Activity {
 		
 		_loading.setVisibility(View.GONE);
 		_timeline.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onTimelineObtained(Iterable<Status> timeline) {
+		
+		List<TweetViewModel> tweets = new ArrayList<TweetViewModel>();
+		
+		for(Status s : timeline) {
+			tweets.add(new TweetViewModel(s.id, s.text, s.user.name, s.createdAt));
+		}
+		
+		updateViewModel(tweets);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		Intent intent = new Intent(this, DetailsActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		intent.putExtra(DetailsActivity.TWEET_VIEW_PARAMETER, _viewModel.getTweets().get(arg2));
+		startActivity(intent);
 	}
 }
