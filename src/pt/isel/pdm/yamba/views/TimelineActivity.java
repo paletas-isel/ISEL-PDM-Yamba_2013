@@ -5,18 +5,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.TweetDateFormat;
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
-import pt.isel.pdm.yamba.R;
 import winterwell.jtwitter.Twitter.Status;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
