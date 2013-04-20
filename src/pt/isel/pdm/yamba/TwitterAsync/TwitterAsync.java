@@ -11,6 +11,7 @@ import pt.isel.pdm.yamba.TwitterAsync.tasks.StatusPublicationAsync;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
 import winterwell.jtwitter.Twitter;
 import android.content.Context;
+import android.os.AsyncTask;
 
 public class TwitterAsync {
 		
@@ -93,16 +94,16 @@ public class TwitterAsync {
 		return _statusPublishedListener.get();
 	}
 	
-	public void updateStatusAsync(Context context, String statusText, long inReplyToStatusId)
+	public AsyncTask<?, ?, ?> updateStatusAsync(Context context, String statusText, long inReplyToStatusId)
 			throws TwitterException {
 
-		new StatusPublicationAsync(this)
+		return new StatusPublicationAsync(this)
 			.execute(new StatusContainer(statusText, inReplyToStatusId));		
 	}
 
-	public void updateStatusAsync(Context context, String statusText) {		
+	public AsyncTask<?, ?, ?> updateStatusAsync(Context context, String statusText) {		
 
-		new StatusPublicationAsync(this)
+		return new StatusPublicationAsync(this)
 			.execute(new StatusContainer(statusText));		
 	}		
 	
@@ -125,14 +126,14 @@ public class TwitterAsync {
 		_timelineObtainedListener = null;
 	}	
 	
-	public void getUserTimelineAsync(Context context) {
+	public AsyncTask<?, ?, ?> getUserTimelineAsync(Context context) {
 
-		new GetTimelineAsync(this).execute();
+		return new GetTimelineAsync(this).execute();
 	}
 	
-	public void getUserTimelineAsync(Context context, String user) {
+	public AsyncTask<?, ?, ?> getUserTimelineAsync(Context context, String user) {
 
-		new GetTimelineAsync(this).execute(user);
+		return new GetTimelineAsync(this).execute(user);
 	}
 	
 	/*

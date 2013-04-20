@@ -20,5 +20,6 @@
     <string name="tweet_author">Author</string>
     <string name="tweet_date">Publication Date</string>
     <string name="tweet_id">ID</string>
+    <string name="loading_image">file:///android_res/drawable/loading_unicorn.gif</string>
 
 </resources>

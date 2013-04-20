@@ -3,7 +3,6 @@ package pt.isel.pdm.yamba.views;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.TweetDateFormat;
@@ -14,8 +13,10 @@ import pt.isel.pdm.yamba.views.models.TweetViewModel;
 import winterwell.jtwitter.Twitter.Status;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 
 public class TimelineActivity extends YambaBaseActivity implements TimelineObtainedListener, OnItemClickListener {
 
+	private static final String TWEET_LIST_TIMELINE = "TIMELINE_TWEETS";
+	
 	public TimelineActivity() {
 		super(TimelineActivity.class, R.menu.timeline);
 	}
@@ -72,9 +75,9 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 				v = getLayoutInflater().inflate(R.layout.timeline_tweet, null);
 				dataHolder = new TweetHolder(); 
 				
-				dataHolder.author = (TextView) v.findViewById(R.id.tweet_text);
-				dataHolder.status = (TextView) v.findViewById(R.id.username);
-				dataHolder.publicationTime = (TextView) v.findViewById(R.id.date);
+				dataHolder.author = (TextView) v.findViewById(R.id.tweet_username);
+				dataHolder.status = (TextView) v.findViewById(R.id.tweet_text);
+				dataHolder.publicationTime = (TextView) v.findViewById(R.id.tweet_date);
 			
 				v.setTag(dataHolder);
 			}
@@ -113,17 +116,48 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 		list.setOnItemClickListener(this);
 		
 		_loading = findViewById(R.id.timeline_loading);
+		WebView loadingWV = (WebView) findViewById(R.id.timeline_loading_wv);
+		loadingWV.loadUrl(getString(R.string.loading_image));
 		
-		refreshTimeline();
+		if(savedInstanceState != null && savedInstanceState.containsKey(TWEET_LIST_TIMELINE))
+		{
+			Log.d(this.getClass().getName(), "Loading instance data.");
+			updateViewModel(savedInstanceState.getParcelableArrayList(TWEET_LIST_TIMELINE));
+		}
+		else
+		{
+			refreshTimeline();
+		}
     }
     
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onRestoreInstanceState(android.os.Bundle)
+	 */
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		Log.d(this.getClass().getName(), "Loading instance data.");
+		updateViewModel(savedInstanceState.getParcelableArrayList(TWEET_LIST_TIMELINE));
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		Log.d(this.getClass().getName(), "Saving instance data.");
+		outState.putParcelableArrayList(TWEET_LIST_TIMELINE, _viewModel.getTweets());
+		super.onSaveInstanceState(outState);
+	}
+
 	private void refreshTimeline() {		
 		_connection.getUserTimelineAsync(this);
 	}
 	
-	private void updateViewModel(Iterable<TweetViewModel> tweets) {
+	@SuppressWarnings("unchecked")
+	private void updateViewModel(ArrayList<? super TweetViewModel> tweets) {
 
-		_viewModel = new TimelineViewModel(tweets);		
+		_viewModel = new TimelineViewModel((ArrayList<TweetViewModel>) tweets);		
 		
 		_adapter.setData(_viewModel);
 		
@@ -134,7 +168,7 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	@Override
 	public void onTimelineObtained(Iterable<Status> timeline) {
 		
-		List<TweetViewModel> tweets = new ArrayList<TweetViewModel>();
+		ArrayList<TweetViewModel> tweets = new ArrayList<TweetViewModel>();
 		
 		for(Status s : timeline) {
 			tweets.add(new TweetViewModel(s.id, s.text, s.user.name, s.createdAt));
