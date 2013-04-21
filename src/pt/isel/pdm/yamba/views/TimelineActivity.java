@@ -14,6 +14,8 @@ import winterwell.jtwitter.Twitter.Status;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -99,14 +101,14 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	private TimelineViewModel _viewModel;
 	
 	private View _loading, _timeline;
+	private boolean _refreshing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         
-        _connection = TwitterAsync.connect();
-        
+        _connection = TwitterAsync.connect();        
         _connection.setTimelineObtainedListener(this);
         
         ListView list;
@@ -130,6 +132,22 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 		}
     }
     
+    @Override
+    protected void onMenuLoaded(Menu menu)
+    {
+    	menu.findItem(R.id.action_refresh).setEnabled(!_refreshing);
+    }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {		
+		final int itemId = item.getItemId();		
+		if(itemId == R.id.action_refresh)
+		{		
+			refreshTimeline();
+		}		
+		return super.onOptionsItemSelected(item);
+	}
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onRestoreInstanceState(android.os.Bundle)
 	 */
@@ -150,30 +168,38 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 		super.onSaveInstanceState(outState);
 	}
 
-	private void refreshTimeline() {		
+	private void refreshTimeline() {	
+		final Menu menu = getMenu();					
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {					
+				_loading.setVisibility(View.VISIBLE);
+				_timeline.setVisibility(View.GONE);
+				if(menu != null) {
+					menu.findItem(R.id.action_refresh).setEnabled(false);	
+				}				
+			}}
+		);
+		_refreshing = true;
 		_connection.getUserTimelineAsync(this);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void updateViewModel(ArrayList<? super TweetViewModel> tweets) {
-
-		_viewModel = new TimelineViewModel((ArrayList<TweetViewModel>) tweets);		
-		
+		_viewModel = new TimelineViewModel((ArrayList<TweetViewModel>) tweets);				
 		_adapter.setData(_viewModel);
-		
+		getMenu().findItem(R.id.action_refresh).setEnabled(true);			
 		_loading.setVisibility(View.GONE);
 		_timeline.setVisibility(View.VISIBLE);
 	}
 
 	@Override
-	public void onTimelineObtained(Iterable<Status> timeline) {
-		
-		ArrayList<TweetViewModel> tweets = new ArrayList<TweetViewModel>();
-		
+	public void onTimelineObtained(Iterable<Status> timeline) {		
+		_refreshing = false;
+		ArrayList<TweetViewModel> tweets = new ArrayList<TweetViewModel>();		
 		for(Status s : timeline) {
 			tweets.add(new TweetViewModel(s.id, s.text, s.user.name, s.createdAt));
-		}
-		
+		}		
 		updateViewModel(tweets);
 	}
 

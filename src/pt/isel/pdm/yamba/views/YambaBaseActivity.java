@@ -22,6 +22,11 @@ abstract class YambaBaseActivity extends Activity {
 	
 	private final int _menuRes;
 	private final Class<? extends YambaBaseActivity> _activity;
+	private Menu _menu;
+	
+	protected Menu getMenu() {
+		return _menu;		
+	}
 	
 	protected YambaBaseActivity(Class<? extends YambaBaseActivity> activity, int menuRes) {
 		this._activity = activity;
@@ -30,6 +35,8 @@ abstract class YambaBaseActivity extends Activity {
 	
 	@Override
 	public final boolean onCreateOptionsMenu(Menu menu) {
+		
+		_menu = menu;
 		
 		getMenuInflater().inflate(_menuRes, menu);
 		
@@ -40,11 +47,18 @@ abstract class YambaBaseActivity extends Activity {
 				menu.add(0, entry.getKey(), ++order, entry.getValue().getSimpleName());
 		}
 		
+		onMenuLoaded(menu);
+		
 		return true;
+	}
+	
+	protected void onMenuLoaded(Menu menu)
+	{
+		
 	}
 
 	@Override
-	public final boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		
 		final int itemId = item.getItemId();
 		
