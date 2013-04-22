@@ -1,11 +1,11 @@
 package pt.isel.pdm.yamba.views;
 
-import pt.isel.android.content.SharedPreferencesListener;
 import pt.isel.java.Func;
 import pt.isel.pdm.yamba.R;
+import pt.isel.pdm.yamba.settings.Settings;
 import pt.isel.pdm.yamba.views.models.StatusViewModel;
+import winterwell.jtwitter.Twitter.Status;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -18,10 +18,9 @@ import android.widget.TextView;
 
 public class StatusActivity extends YambaBaseActivity {
 	
-	private static final String STATUS_MAXLENGTH_PROP = "prefkey_status_maxcharacters";
-	
-	private final Object _sendTweetLockObj = new Object();
 	private final StatusViewModel _viewModel;
+	
+	private TextView _remainingCharacters; 
 	
 	public StatusActivity() {
 		super(R.menu.status);
@@ -34,9 +33,9 @@ public class StatusActivity extends YambaBaseActivity {
 		setContentView(R.layout.activity_status);
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferencesListener.registerAndTriggerFirst(
+		registerAndTriggerFirst(
 				prefs, 
-				STATUS_MAXLENGTH_PROP, 
+				Settings.Status.MaxCharacters, 
 				Integer.toString(StatusViewModel.STATUS_MAXSIZE_DEFAULT), 
 				new Func<Void,String>() {
 					@Override
@@ -46,8 +45,10 @@ public class StatusActivity extends YambaBaseActivity {
 					}
 				}
 			);
-							
-		final TextView remainingCharacters = (TextView) findViewById(R.id.status_remaining_characters);
+		
+		_remainingCharacters = (TextView) findViewById(R.id.status_remaining_characters);
+		
+		final TextView remainingCharacters = _remainingCharacters;
 		final EditText statusMsg = (EditText) findViewById(R.id.status_message);
 		final Button send = (Button) findViewById(R.id.status_send);
 		
@@ -81,35 +82,27 @@ public class StatusActivity extends YambaBaseActivity {
 				
 				if(!send.isEnabled())
 					return;
-					
-				synchronized(_sendTweetLockObj) {
-						
-					if(!send.isEnabled())
-						return;
-					
-					new AsyncTask<Void, Void, Void>() {
+				
+				send.setEnabled(false);
+				statusMsg.setEnabled(false);
+				
+				_viewModel.sendStatusCommandAsync(new Func<Void, Status>() {
 
-						@Override
-						protected void onPreExecute() {
-							send.setEnabled(false);
-							statusMsg.setEnabled(false);
-							super.onPreExecute();
-						}
-						
-						@Override
-						protected Void doInBackground(Void... params) {
-							_viewModel.sendStatusCommand();
-							return null;
-						}
-						
-						protected void onPostExecute(Void result) {
-							statusMsg.setText("");
-							statusMsg.setEnabled(true);
-							send.setEnabled(true);
-						}
-					}.execute();
-				}
+					@Override
+					public Void execute(Status param) {
+						statusMsg.setText("");
+						statusMsg.setEnabled(true);
+						send.setEnabled(true);
+						return null;
+					}
+				});
 			}
 		});
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		_remainingCharacters.setText(Integer.toString(_viewModel.getRemainingCharacters()));
 	}
 }
