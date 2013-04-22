@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+   
+    <string name="action_settings">Preferências</string>
+    <string name="action_status">Estado</string>
+    <string name="action_timeline">Timeline</string>
+    <string name="action_refresh">Carregar</string>
+    <string name="action_preferences">Preferências</string>
+    <string name="action_status_send">Enviar</string>
+    <string name="loading">A Carregar &#8230;</string>
+    <string name="title_activity_details">DetailsActivity</string>
+    <string name="hello_world">Olá Mundo!</string>
+    <string name="title_activity_status">StatusActivity</string>
+    <string name="status_send_text">Enviar</string>
+    <string name="title_activity_yamba_base">YambaBaseActivity</string>
+    <string name="tweet_author">Autor</string>
+    <string name="tweet_date">Data de Publicação</string>
+    <string name="tweet_id">ID</string>
+    <string name="loading_image">file:///android_res/drawable/loading_unicorn.gif</string>
+    <string name="preferences_yamba_title">Sessão Yamba</string>
+    <string name="preferences_yamba_username">Utilizador</string>
+    <string name="preferences_yamba_username_summary">Utilizador do Yamba</string>
+    <string name="title_activity_preferences">Preferências</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="loading">A carregar &#8230;</string>
-    <string name="title_activity_details">Detalhes</string>
-    <string name="title_activity_status">Novo</string>
+    <string name="preferences_yamba_password">Palavra-Chave</string>
+    <string name="preferences_yamba_password_summary">Palavra-Chave do Yamba</string>
+    <string name="preferences_yamba_uri">URI</string>
+    <string name="preferences_yamba_uri_summary">URI da API do Yamba</string>
+    <string name="preferences_timeline_title">Timeline</string>
+    <string name="preferences_timeline_maxtweets">Tweets em Memória</string>
+    <string name="preferences_timeline_maxtweets_summary">Número máximo de tweets em memória</string>
+    <string name="preferences_status_title">Estado</string>
+    <string name="preferences_status_maxcharacters">Tamanho Máximo</string>
+    <string name="preferences_status_maxcharacters_summary">Tamanho máximo de um estado</string>
 
 </resources>
