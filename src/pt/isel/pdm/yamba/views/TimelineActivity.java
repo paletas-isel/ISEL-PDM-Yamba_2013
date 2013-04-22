@@ -32,7 +32,7 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	private static int _MaxSavedTweets = 20; 
 	
 	public TimelineActivity() {
-		super(TimelineActivity.class, R.menu.timeline);
+		super(R.menu.timeline);
 	}
 
 	private static final TweetDateFormat _DateFormat = new TweetDateFormat();
@@ -190,7 +190,7 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	private void updateViewModel(ArrayList<? super TweetViewModel> tweets) {
 		_viewModel = new TimelineViewModel((ArrayList<TweetViewModel>) tweets);				
 		_adapter.setData(_viewModel);
-		getMenu().findItem(R.id.action_refresh).setEnabled(true);			
+		// getMenu().findItem(R.id.action_refresh).setEnabled(true);			
 		_loading.setVisibility(View.GONE);
 		_timeline.setVisibility(View.VISIBLE);
 	}
