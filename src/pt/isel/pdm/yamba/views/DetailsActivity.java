@@ -5,7 +5,6 @@ import pt.isel.pdm.yamba.views.models.TweetViewModel;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
 import android.widget.TextView;
 
 public class DetailsActivity extends Activity {	

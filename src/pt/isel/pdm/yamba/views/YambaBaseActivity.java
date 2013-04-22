@@ -23,7 +23,7 @@ public class YambaBaseActivity extends Activity {
 	
 	private final int _menuRes;
 	private Menu _menu;
-	private final MenuInflater _menuInflater;
+	private MenuInflater _menuInflater;
 	
 	protected Menu getMenu() {
 		return _menu;		
@@ -31,7 +31,6 @@ public class YambaBaseActivity extends Activity {
 	
 	protected YambaBaseActivity(int menuRes) {
 		this._menuRes = menuRes;
-		this._menuInflater = new MenuInflaterComposite(this, Arrays.asList(super.getMenuInflater(), new YambaMenuInflater(this)));
 		this._keepAlive = new LinkedList<Object>();
 	}
 	
@@ -69,6 +68,9 @@ public class YambaBaseActivity extends Activity {
 	
 	@Override
 	public MenuInflater getMenuInflater() {
+		if(_menuInflater == null) {
+			this._menuInflater = new MenuInflaterComposite(this, Arrays.asList(super.getMenuInflater(), new YambaMenuInflater(this)));
+		}
 		return _menuInflater;
 	}
 	

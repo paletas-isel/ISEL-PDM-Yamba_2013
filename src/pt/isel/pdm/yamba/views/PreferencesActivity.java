@@ -16,10 +16,9 @@ import android.view.MenuItem;
 
 public class PreferencesActivity extends PreferenceActivity {
 
-	private final MenuInflater _menuInflater;
+	private MenuInflater _menuInflater;
 	
 	public PreferencesActivity() {
-		_menuInflater = new MenuInflaterComposite(this, Arrays.asList(super.getMenuInflater(), new YambaMenuInflater(this)));
 	}
 	
 	@Override
@@ -51,6 +50,9 @@ public class PreferencesActivity extends PreferenceActivity {
 	
 	@Override
 	public MenuInflater getMenuInflater() {
+		if(_menuInflater == null) {
+			_menuInflater = new MenuInflaterComposite(this, Arrays.asList(super.getMenuInflater(), new YambaMenuInflater(this)));
+		}
 		return _menuInflater;
 	}
 }

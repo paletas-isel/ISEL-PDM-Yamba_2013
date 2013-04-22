@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import pt.isel.java.Func;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.TweetDateFormat;
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TimelineObtainedListener;
+import pt.isel.pdm.yamba.TwitterAsync.listeners.TwitterExceptionListener;
+import pt.isel.pdm.yamba.exceptions.TwitterException;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
 import winterwell.jtwitter.Twitter.Status;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,12 +30,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class TimelineActivity extends YambaBaseActivity implements TimelineObtainedListener, OnItemClickListener {
+public class TimelineActivity extends YambaBaseActivity implements TimelineObtainedListener, OnItemClickListener, TwitterExceptionListener {
 
 	private static final String TWEET_LIST_TIMELINE = "TIMELINE_TWEETS";
-	
-	private static int _MaxSavedTweets = 20; 
-	
+		
 	public TimelineActivity() {
 		super(R.menu.timeline);
 	}
@@ -103,12 +106,28 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	private TimelineViewModel _viewModel;
 	
 	private View _loading, _timeline;
-	private boolean _refreshing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        
+        _viewModel = new TimelineViewModel();
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		registerAndTriggerFirst(
+				prefs, 
+				pt.isel.pdm.yamba.settings.Settings.Timeline.Size, 
+				Integer.toString(TimelineViewModel.MAX_SAVED_TWEETS), 
+				new Func<Void,String>() {
+					@Override
+					public Void execute(String param) {
+						_viewModel.setMaxSavedTweets(Integer.parseInt(param));
+						updateTweetsList();
+						return null;
+					}
+				}
+			);
         
         _connection = TwitterAsync.connect();        
         _connection.setTimelineObtainedListener(this);
@@ -133,11 +152,22 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 			refreshTimeline();
 		}
     }
+
+	private void updateTweetsList() {
+		if(_adapter != null && _viewModel != null) {
+			runOnUiThread(new Runnable() {							
+				@Override
+				public void run() {
+					_adapter.setData(_viewModel);
+				}
+			});
+		}
+	}
     
     @Override
     protected void onMenuLoaded(Menu menu)
     {
-    	menu.findItem(R.id.action_refresh).setEnabled(!_refreshing);
+    	menu.findItem(R.id.action_refresh).setEnabled(!_viewModel.isRefreshing());
     }
 
 	@Override
@@ -182,26 +212,29 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 				}				
 			}}
 		);
-		_refreshing = true;
+		_viewModel.setRefreshing(true);
 		_connection.getUserTimelineAsync(this);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void updateViewModel(ArrayList<? super TweetViewModel> tweets) {
-		_viewModel = new TimelineViewModel((ArrayList<TweetViewModel>) tweets);				
-		_adapter.setData(_viewModel);
-		// getMenu().findItem(R.id.action_refresh).setEnabled(true);			
+		_viewModel.setTweets((ArrayList<TweetViewModel>) tweets);
+		updateTweetsList();
+		
+		Menu menu = getMenu();
+		if(menu != null) menu.findItem(R.id.action_refresh).setEnabled(true);			
+		
 		_loading.setVisibility(View.GONE);
 		_timeline.setVisibility(View.VISIBLE);
 	}
 
 	@Override
 	public void onTimelineObtained(Iterable<Status> timeline) {		
-		_refreshing = false;
+		_viewModel.setRefreshing(false);
 		int count = 0;
 		ArrayList<TweetViewModel> tweets = new ArrayList<TweetViewModel>();		
 		for(Status s : timeline) {
-			if(++count < _MaxSavedTweets) {
+			if(++count < _viewModel.getMaxSavedTweets()) {
 				tweets.add(new TweetViewModel(s.id, s.text, s.user.name, s.createdAt));
 			}
 		}		
@@ -214,5 +247,19 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		intent.putExtra(DetailsActivity.TWEET_VIEW_PARAMETER, _viewModel.getTweets().get(arg2));
 		startActivity(intent);
+	}
+
+	@Override
+	public void onExceptionThrown(TwitterException e) {
+		_viewModel.setRefreshing(false);
+		final Menu menu = getMenu();					
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {					
+				if(menu != null) {
+					menu.findItem(R.id.action_refresh).setEnabled(true);	
+				}				
+			}}
+		);
 	}
 }
