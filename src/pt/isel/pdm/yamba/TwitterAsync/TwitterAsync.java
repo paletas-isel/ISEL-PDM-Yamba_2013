@@ -39,6 +39,10 @@ public class TwitterAsync {
 		return _Username;
 	}
 	
+	public synchronized static String getServiceUri() {
+		return _ServiceUri;
+	}
+	
 	public synchronized static void setUsername(String username) {
 		_Connection = null;
 		_Username = username;

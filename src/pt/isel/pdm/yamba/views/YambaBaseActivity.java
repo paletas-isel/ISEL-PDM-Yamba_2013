@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class YambaBaseActivity extends Activity {
 	
-	private Collection<Object> _keepAlive;
+	private Collection<Object> _foreverAlone;
 	
 	private final int _menuRes;
 	private Menu _menu;
@@ -31,7 +31,7 @@ public class YambaBaseActivity extends Activity {
 	
 	protected YambaBaseActivity(int menuRes) {
 		this._menuRes = menuRes;
-		this._keepAlive = new LinkedList<Object>();
+		this._foreverAlone = new LinkedList<Object>();
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class YambaBaseActivity extends Activity {
 	@Override
 	public MenuInflater getMenuInflater() {
 		if(_menuInflater == null) {
-			this._menuInflater = new MenuInflaterComposite(this, Arrays.asList(super.getMenuInflater(), new YambaMenuInflater(this)));
+			_menuInflater = new MenuInflaterComposite(this, Arrays.asList(super.getMenuInflater(), new YambaMenuInflater(this)));
 		}
 		return _menuInflater;
 	}
@@ -79,6 +79,6 @@ public class YambaBaseActivity extends Activity {
 	}
 	
 	public void registerAndTriggerFirst(SharedPreferences prefs, String key, String defaultValue, Func<Void, String> func) {
-		_keepAlive.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, key, defaultValue, func));		
+		_foreverAlone.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, key, defaultValue, func));		
 	}
 }
