@@ -1,9 +1,13 @@
 package pt.isel.pdm.yamba.views;
 
+import pt.isel.android.content.SharedPreferencesListener;
+import pt.isel.java.Func;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.views.models.StatusViewModel;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -14,23 +18,35 @@ import android.widget.TextView;
 
 public class StatusActivity extends YambaBaseActivity {
 	
-	private final Object _sendTweetLockObj = new Object();
+	private static final String STATUS_MAXLENGTH_PROP = "prefkey_status_maxcharacters";
 	
+	private final Object _sendTweetLockObj = new Object();
 	private final StatusViewModel _viewModel;
 	
 	public StatusActivity() {
-		super(StatusActivity.class, R.menu.status);
-		
+		super(R.menu.status);
 		_viewModel = new StatusViewModel(this);
 	}
 
-	// TODO Study InputFilters for message validation
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_status);
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferencesListener.registerAndTriggerFirst(
+				prefs, 
+				STATUS_MAXLENGTH_PROP, 
+				Integer.toString(StatusViewModel.STATUS_MAXSIZE_DEFAULT), 
+				new Func<Void,String>() {
+					@Override
+					public Void execute(String param) {
+						_viewModel.setStatusMaxSize(Integer.parseInt(param));
+						return null;
+					}
+				}
+			);
+							
 		final TextView remainingCharacters = (TextView) findViewById(R.id.status_remaining_characters);
 		final EditText statusMsg = (EditText) findViewById(R.id.status_message);
 		final Button send = (Button) findViewById(R.id.status_send);
@@ -41,6 +57,8 @@ public class StatusActivity extends YambaBaseActivity {
 			public void afterTextChanged(Editable s) {
 				_viewModel.setMessage(s.toString());
 				remainingCharacters.setText(Integer.toString(_viewModel.getRemainingCharacters()));
+				
+				send.setEnabled(_viewModel.getRemainingCharacters() >= 0);
 			}
 
 			@Override

@@ -10,16 +10,18 @@ public class StatusViewModel {
 	
 	private final Object SendStatusLockObj = new Object();
 	
-	private static final int STATUS_MAX_LENGTH = 140;
+	public static final int STATUS_MAXSIZE_DEFAULT = 140;
 	private static final int STATUS_PUBLISH_TIMEOUT = 3000;
 	
 	private final Context _context;
 	private String _message;
+	private int _statusMaxSize;
 	
 	public StatusViewModel(Context context) {
 		
 		this._context = context;
 		setMessage("");
+		setStatusMaxSize(STATUS_MAXSIZE_DEFAULT);
 	}
 	
 	public void setMessage(String message) {
@@ -30,8 +32,12 @@ public class StatusViewModel {
 		return _message;
 	}
 	
+	public void setStatusMaxSize(int size) {
+		_statusMaxSize = size;
+	}
+	
 	public int getRemainingCharacters() {
-		return STATUS_MAX_LENGTH - _message.length();
+		return _statusMaxSize - _message.length();
 	}
 	
 	public void sendStatusCommand() {

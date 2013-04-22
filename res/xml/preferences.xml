@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+ 
+    <PreferenceCategory android:title="@string/preferences_yamba_title" >
+        <EditTextPreference
+                android:title="@string/preferences_yamba_username"
+                android:summary="@string/preferences_yamba_username_summary"
+                android:key="prefkey_yamba_username"/>
+        
+         <EditTextPreference
+				android:title="@string/preferences_yamba_password"
+                android:summary="@string/preferences_yamba_password_summary"
+				android:inputType="textPassword" 
+               	android:key="prefkey_yamba_password"/>
+         
+          <EditTextPreference
+                android:title="@string/preferences_yamba_uri"
+                android:summary="@string/preferences_yamba_uri_summary"
+                android:key="prefkey_yamba_uri"/>
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/preferences_timeline_title" >
+         
+   		<EditTextPreference
+   		    android:title="@string/preferences_timeline_maxtweets"
+            android:summary="@string/preferences_timeline_maxtweets_summary"
+            android:inputType="number"
+            android:key="prefkey_timeline_maxtweets"/>
+
+  	</PreferenceCategory>
+  	
+     <PreferenceCategory android:title="@string/preferences_status_title" >
+         
+   		<EditTextPreference
+   		    android:title="@string/preferences_status_maxcharacters"
+            android:summary="@string/preferences_status_maxcharacters_summary"
+            android:inputType="number"
+            android:key="prefkey_status_maxcharacters"/>
+
+  	</PreferenceCategory>
+  	
+</PreferenceScreen>
