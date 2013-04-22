@@ -1,10 +1,14 @@
 package pt.isel.pdm.yamba;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import pt.isel.android.content.SharedPreferencesListener;
 import pt.isel.java.Func;
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TwitterExceptionListener;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
+import pt.isel.pdm.yamba.settings.Settings;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -12,11 +16,8 @@ import android.widget.Toast;
 
 public class YambaApplication extends Application{
 	
-	private static final String
-		PREFKEY_USERNAME = "prefkey_yamba_username",
-		PREFKEY_PASSWORD = "prefkey_yamba_password",
-		PREFKEY_URI = "prefkey_yamba_uri";
-	
+	private final Collection<Object> _keepAlive = new LinkedList<Object>();
+		
 	private static YambaApplication _application;
 	
 	public static YambaApplication getApplication() { return _application; }
@@ -28,7 +29,7 @@ public class YambaApplication extends Application{
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		SharedPreferencesListener.registerAndTriggerFirst(prefs, PREFKEY_USERNAME, "student", 
+		_keepAlive.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Username, null, 
 				new Func<Void, String>() {
 
 					@Override
@@ -37,9 +38,9 @@ public class YambaApplication extends Application{
 						return null;
 					}
 				}
-		);
+		));
 		
-		SharedPreferencesListener.registerAndTriggerFirst(prefs, PREFKEY_PASSWORD, "password", 
+		_keepAlive.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Password, null, 
 				new Func<Void, String>() {
 
 					@Override
@@ -48,9 +49,9 @@ public class YambaApplication extends Application{
 						return null;
 					}
 				}
-		);
+		));
 		
-		SharedPreferencesListener.registerAndTriggerFirst(prefs, PREFKEY_URI, "http://yamba.marakana.com/api", 
+		_keepAlive.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Uri, null, 
 				new Func<Void, String>() {
 
 					@Override
@@ -59,7 +60,7 @@ public class YambaApplication extends Application{
 						return null;
 					}
 				}
-		);
+		));
 		
 		TwitterAsync.setTwitterExceptionListener(new TwitterExceptionListener() {
 			
@@ -70,5 +71,4 @@ public class YambaApplication extends Application{
 			}
 		});
 	}
-	
 }
