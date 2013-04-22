@@ -13,6 +13,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_status">StatusActivity</string>
     <string name="status_send_text">Send</string>
+    <string name="status_remaining_characters_pendent">-</string>
     <string name="title_activity_yamba_base">YambaBaseActivity</string>
     <string name="tweet_author">Author</string>
     <string name="tweet_date">Publication Date</string>
@@ -22,7 +23,6 @@
     <string name="preferences_yamba_username">Username</string>
     <string name="preferences_yamba_username_summary">Yamba account username</string>
     <string name="title_activity_preferences">Preferences</string>
-
     <string name="preferences_yamba_password">Password</string>
     <string name="preferences_yamba_password_summary">Yamba account password</string>
     <string name="preferences_yamba_uri">URI</string>
@@ -33,5 +33,6 @@
     <string name="preferences_status_title">Status</string>
     <string name="preferences_status_maxcharacters">Max size</string>
     <string name="preferences_status_maxcharacters_summary">Maximum number of characters in one status</string>
+    <string name="title_activity_launcher">LauncherActivity</string>
 
 </resources>

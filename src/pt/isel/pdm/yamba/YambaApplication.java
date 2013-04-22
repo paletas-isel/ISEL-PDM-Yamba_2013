@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 public class YambaApplication extends Application{
 	
-	private final Collection<Object> _keepAlive = new LinkedList<Object>();
+	private final Collection<Object> _foreverAlone = new LinkedList<Object>();
 		
 	private static YambaApplication _application;
 	
@@ -29,7 +29,7 @@ public class YambaApplication extends Application{
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		_keepAlive.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Username, null, 
+		_foreverAlone.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Username, null, 
 				new Func<Void, String>() {
 
 					@Override
@@ -40,7 +40,7 @@ public class YambaApplication extends Application{
 				}
 		));
 		
-		_keepAlive.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Password, null, 
+		_foreverAlone.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Password, null, 
 				new Func<Void, String>() {
 
 					@Override
@@ -51,7 +51,7 @@ public class YambaApplication extends Application{
 				}
 		));
 		
-		_keepAlive.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Uri, null, 
+		_foreverAlone.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Uri, null, 
 				new Func<Void, String>() {
 
 					@Override
