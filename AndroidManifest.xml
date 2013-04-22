@@ -35,6 +35,7 @@
         </activity>
         <activity
             android:name="pt.isel.pdm.yamba.views.LauncherActivity"
+            android:noHistory="true"
             android:label="@string/title_activity_launcher" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
