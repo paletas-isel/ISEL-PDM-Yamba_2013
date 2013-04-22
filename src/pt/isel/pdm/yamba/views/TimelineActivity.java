@@ -29,6 +29,8 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 
 	private static final String TWEET_LIST_TIMELINE = "TIMELINE_TWEETS";
 	
+	private static int _MaxSavedTweets = 20; 
+	
 	public TimelineActivity() {
 		super(TimelineActivity.class, R.menu.timeline);
 	}
@@ -196,9 +198,12 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	@Override
 	public void onTimelineObtained(Iterable<Status> timeline) {		
 		_refreshing = false;
+		int count = 0;
 		ArrayList<TweetViewModel> tweets = new ArrayList<TweetViewModel>();		
 		for(Status s : timeline) {
-			tweets.add(new TweetViewModel(s.id, s.text, s.user.name, s.createdAt));
+			if(++count < _MaxSavedTweets) {
+				tweets.add(new TweetViewModel(s.id, s.text, s.user.name, s.createdAt));
+			}
 		}		
 		updateViewModel(tweets);
 	}
