@@ -1,6 +1,6 @@
 package pt.isel.pdm.yamba.views.models;
 
-import pt.isel.java.Func;
+import pt.isel.java.Action;
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.StatusPublishedListener;
 import winterwell.jtwitter.Twitter.Status;
@@ -37,7 +37,7 @@ public class StatusViewModel {
 		return _statusMaxSize - _message.length();
 	}
 	
-	public void sendStatusCommandAsync(final Func<Void, Status> callback) {
+	public void sendStatusCommandAsync(final Action<Status> callback) {
 		
 		TwitterAsync twitter = TwitterAsync.connect();
 		

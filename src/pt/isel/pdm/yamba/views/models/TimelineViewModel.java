@@ -5,11 +5,15 @@ import java.util.List;
 
 public class TimelineViewModel {
 
-	public static int MAX_SAVED_TWEETS = 20;	
+	public static int MAX_SAVED_TWEETS = 20;
+	public static boolean AUTO_REFRESH = true;
+	public static int AUTO_REFRESH_RATE = 60; //Seconds
 	
 	private ArrayList<TweetViewModel> _tweets; 
 	private boolean _refreshing = false;
 	private int _maxSavedTweets = MAX_SAVED_TWEETS; 
+	private boolean _isAutoRefreshEnabled = false;
+	private int _autoRefreshRate = 1000;
 	
 	public TimelineViewModel() {
 		
@@ -76,5 +80,21 @@ public class TimelineViewModel {
 	public void setMaxSavedTweets(int maxSavedTweets) {
 		this._maxSavedTweets = maxSavedTweets;
 		limitTweetsInMemory(_tweets);
-	}	
+	}
+	
+	public boolean isAutoRefreshEnabled() {
+		return _isAutoRefreshEnabled;
+	}
+	
+	public void setAutoRefreshEnabled(boolean isEnabled) {
+		_isAutoRefreshEnabled = isEnabled;
+	}
+	
+	public int getAutoRefreshRate() {
+		return _autoRefreshRate;
+	}
+	
+	public void setAutoRefreshRate(int refreshRate) {
+		_autoRefreshRate = refreshRate;
+	}
 }

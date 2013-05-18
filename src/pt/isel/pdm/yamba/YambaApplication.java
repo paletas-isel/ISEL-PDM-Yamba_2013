@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import pt.isel.android.content.SharedPreferencesListener;
-import pt.isel.java.Func;
+import pt.isel.java.Action;
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TwitterExceptionListener;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
@@ -30,37 +30,34 @@ public class YambaApplication extends Application{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		_foreverAlone.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Username, null, 
-				new Func<Void, String>() {
+				new Action<String>() {
 
 					@Override
-					public Void execute(String param) {
+					public void execute(String param) {
 						TwitterAsync.setUsername(param);
-						return null;
 					}
 				}
-		));
+		, String.class));
 		
 		_foreverAlone.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Password, null, 
-				new Func<Void, String>() {
+				new Action<String>() {
 
 					@Override
-					public Void execute(String param) {
+					public void execute(String param) {
 						TwitterAsync.setPassword(param);
-						return null;
 					}
 				}
-		));
+		, String.class));
 		
 		_foreverAlone.add(SharedPreferencesListener.registerAndTriggerFirst(prefs, Settings.Yamba.Uri, null, 
-				new Func<Void, String>() {
+				new Action<String>() {
 
 					@Override
-					public Void execute(String param) {
+					public void execute(String param) {
 						TwitterAsync.setServiceUri(param);
-						return null;
 					}
 				}
-		));
+		, String.class));
 		
 		TwitterAsync.setTwitterExceptionListener(new TwitterExceptionListener() {
 			

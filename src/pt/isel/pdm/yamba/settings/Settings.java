@@ -13,6 +13,8 @@ public class Settings {
 	public static class Timeline {
 		
 		public static final String Size = "prefkey_timeline_maxtweets";
+		public static final String AutoRefresh = "prefkey_timeline_autorefresh";
+		public static final String RefreshRate = "prefkey_timeline_autorefreshrate";
 	}
 	
 	public static class Status {

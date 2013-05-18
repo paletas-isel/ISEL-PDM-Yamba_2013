@@ -30,6 +30,10 @@
     <string name="preferences_timeline_title">Timeline</string>
     <string name="preferences_timeline_maxtweets">Size</string>
     <string name="preferences_timeline_maxtweets_summary">Maximum status in your timeline</string>
+    <string name="preferences_timeline_autorefresh">Enable Auto Refresh</string>
+    <string name="preferences_timeline_autorefresh_summary">Enables/Disables the timeline autorefresh</string>
+    <string name="preferences_timeline_autorefreshrate">Auto Refresh Rate</string>
+    <string name="preferences_timeline_autorefreshrate_summary">Set the interval in which the refresh is executed (in seconds)</string>
     <string name="preferences_status_title">Status</string>
     <string name="preferences_status_maxcharacters">Max size</string>
     <string name="preferences_status_maxcharacters_summary">Maximum number of characters in one status</string>
