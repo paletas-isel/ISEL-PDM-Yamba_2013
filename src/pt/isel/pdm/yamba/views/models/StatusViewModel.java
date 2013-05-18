@@ -1,10 +1,12 @@
 package pt.isel.pdm.yamba.views.models;
 
 import pt.isel.java.Func;
-import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
-import pt.isel.pdm.yamba.TwitterAsync.listeners.StatusPublishedListener;
-import winterwell.jtwitter.Twitter.Status;
+import pt.isel.pdm.yamba.services.StatusUploadService;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 
 public class StatusViewModel {
 	
@@ -37,19 +39,21 @@ public class StatusViewModel {
 		return _statusMaxSize - _message.length();
 	}
 	
-	public void sendStatusCommandAsync(final Func<Void, Status> callback) {
+	public void sendStatusCommandAsync(final Func<Void, Void> callback) {
 		
-		TwitterAsync twitter = TwitterAsync.connect();
-		
-		final StatusPublishedListener listener = new StatusPublishedListener() {
-			
+		Handler handler = new Handler() {
 			@Override
-			public void onStatusPublished(Status status) {
-				callback.execute(status);
+			public void handleMessage(Message msg) {
+				callback.execute(null);				
 			}
 		};
 		
-		twitter.setStatusPublishedListener(listener);
-		twitter.updateStatusAsync(_context, _message);
+		Messenger messenger = new Messenger(handler);
+		
+		Intent intent = new Intent(_context, StatusUploadService.class);
+		intent.putExtra(StatusUploadService.Keys.Intent.Message, _message);
+		intent.putExtra(StatusUploadService.Keys.Intent.Messenger, messenger);
+		
+		_context.startService(intent);
 	}
 }

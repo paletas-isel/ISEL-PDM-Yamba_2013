@@ -43,6 +43,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <service android:enabled="true" android:name="pt.isel.pdm.yamba.services.StatusUploadService" />
+        
     </application>
 
 </manifest>

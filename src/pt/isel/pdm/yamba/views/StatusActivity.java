@@ -4,7 +4,6 @@ import pt.isel.java.Func;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.settings.Settings;
 import pt.isel.pdm.yamba.views.models.StatusViewModel;
-import winterwell.jtwitter.Twitter.Status;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -86,10 +85,10 @@ public class StatusActivity extends YambaBaseActivity {
 				send.setEnabled(false);
 				statusMsg.setEnabled(false);
 				
-				_viewModel.sendStatusCommandAsync(new Func<Void, Status>() {
+				_viewModel.sendStatusCommandAsync(new Func<Void, Void>() {
 
 					@Override
-					public Void execute(Status param) {
+					public Void execute(Void param) {
 						statusMsg.setText("");
 						statusMsg.setEnabled(true);
 						send.setEnabled(true);
