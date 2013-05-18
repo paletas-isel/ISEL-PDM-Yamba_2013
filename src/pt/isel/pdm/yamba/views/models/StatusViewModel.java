@@ -1,5 +1,14 @@
 package pt.isel.pdm.yamba.views.models;
 
+import pt.isel.java.Action;
+import pt.isel.pdm.yamba.TwitterAsync.services.StatusUploadService;
+import winterwell.jtwitter.Twitter.Status;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
+
 
 public class StatusViewModel {
 	

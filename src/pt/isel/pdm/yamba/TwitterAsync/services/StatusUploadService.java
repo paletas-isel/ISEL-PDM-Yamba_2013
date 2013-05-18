@@ -1,4 +1,4 @@
-package pt.isel.pdm.yamba.services;
+package pt.isel.pdm.yamba.TwitterAsync.services;
 
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.StatusPublishedListener;

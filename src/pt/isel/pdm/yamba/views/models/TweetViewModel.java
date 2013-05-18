@@ -3,7 +3,6 @@ package pt.isel.pdm.yamba.views.models;
 import java.util.Date;
 
 import winterwell.jtwitter.Twitter.Status;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 

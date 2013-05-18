@@ -44,8 +44,10 @@
             </intent-filter>
         </activity>
         
-        <service android:enabled="true" android:name="pt.isel.pdm.yamba.services.StatusUploadService" />
+        <service android:enabled="true" android:name=".TwitterAsync.services.StatusUploadService" />
         <service android:name=".TwitterAsync.services.TimelinePullService"></service>
+        <service android:name=".TwitterAsync.services.UserInfoPullService"></service>
+        <service android:name=".TwitterAsync.services.AsyncUserInfoPullService"></service>
     </application>
 
 </manifest>

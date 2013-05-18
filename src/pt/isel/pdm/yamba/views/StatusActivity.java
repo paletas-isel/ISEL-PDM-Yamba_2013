@@ -4,7 +4,6 @@ import pt.isel.java.Action;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.settings.Settings;
 import pt.isel.pdm.yamba.views.models.StatusViewModel;
-import android.content.SharedPreferences;
 import winterwell.jtwitter.Twitter.Status;
 import android.os.Bundle;
 import android.text.Editable;

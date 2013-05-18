@@ -1,5 +1,6 @@
 package pt.isel.android.content;
 
+import pt.isel.java.Action;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 

@@ -2,9 +2,9 @@ package pt.isel.pdm.yamba.views;
 
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.TextView;
 
 public class DetailsActivity extends Activity {	
