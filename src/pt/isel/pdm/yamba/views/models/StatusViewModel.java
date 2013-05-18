@@ -1,12 +1,5 @@
 package pt.isel.pdm.yamba.views.models;
 
-import pt.isel.java.Func;
-import pt.isel.pdm.yamba.services.StatusUploadService;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
 
 public class StatusViewModel {
 	
@@ -39,7 +32,8 @@ public class StatusViewModel {
 		return _statusMaxSize - _message.length();
 	}
 	
-	public void sendStatusCommandAsync(final Func<Void, Void> callback) {
+
+	public void sendStatusCommandAsync(final Action<Status> callback) {
 		
 		Handler handler = new Handler() {
 			@Override

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import pt.isel.java.Func;
+import pt.isel.java.Action;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.TweetDateFormat;
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
@@ -15,9 +15,7 @@ import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
 import winterwell.jtwitter.Twitter.Status;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -114,20 +112,18 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
         
         _viewModel = new TimelineViewModel();
         
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		registerAndTriggerFirst(
-				prefs, 
-				pt.isel.pdm.yamba.settings.Settings.Timeline.Size, 
-				Integer.toString(TimelineViewModel.MAX_SAVED_TWEETS), 
-				new Func<Void,String>() {
-					@Override
-					public Void execute(String param) {
-						_viewModel.setMaxSavedTweets(Integer.parseInt(param));
-						updateTweetsList();
-						return null;
-					}
+			pt.isel.pdm.yamba.settings.Settings.Timeline.Size, 
+			TimelineViewModel.MAX_SAVED_TWEETS, 
+			new Action<Integer>() {
+				@Override
+				public void execute(Integer param) {
+					_viewModel.setMaxSavedTweets(param);
+					updateTweetsList();
 				}
-			);
+			},
+			Integer.class
+		);
         
         _connection = TwitterAsync.connect();        
         _connection.setTimelineObtainedListener(this);

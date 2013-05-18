@@ -1,15 +1,14 @@
 package pt.isel.android.content;
 
-import pt.isel.java.Func;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 abstract class OnSharedPreferencesChangeFunc<T> implements OnSharedPreferenceChangeListener {
 	
 	private final String _key;
-	private final Func<Void, T> _func;
+	private final Action<T> _func;
 	
-	protected OnSharedPreferencesChangeFunc(String key, Func<Void, T> func) {
+	protected OnSharedPreferencesChangeFunc(String key, Action<T> func) {
 		
 		this._key = key;
 		this._func = func;

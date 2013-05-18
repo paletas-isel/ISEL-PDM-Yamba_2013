@@ -1,12 +1,12 @@
 package pt.isel.pdm.yamba.views;
 
-import pt.isel.java.Func;
+import pt.isel.java.Action;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.settings.Settings;
 import pt.isel.pdm.yamba.views.models.StatusViewModel;
 import android.content.SharedPreferences;
+import winterwell.jtwitter.Twitter.Status;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -31,19 +31,17 @@ public class StatusActivity extends YambaBaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_status);
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		registerAndTriggerFirst(
-				prefs, 
-				Settings.Status.MaxCharacters, 
-				Integer.toString(StatusViewModel.STATUS_MAXSIZE_DEFAULT), 
-				new Func<Void,String>() {
-					@Override
-					public Void execute(String param) {
-						_viewModel.setStatusMaxSize(Integer.parseInt(param));
-						return null;
-					}
+			Settings.Status.MaxCharacters, 
+			Integer.toString(StatusViewModel.STATUS_MAXSIZE_DEFAULT), 
+			new Action<String>() {
+				@Override
+				public void execute(String param) {
+					_viewModel.setStatusMaxSize(Integer.parseInt(param));
 				}
-			);
+			},
+			String.class
+		);
 		
 		_remainingCharacters = (TextView) findViewById(R.id.status_remaining_characters);
 		
@@ -85,14 +83,12 @@ public class StatusActivity extends YambaBaseActivity {
 				send.setEnabled(false);
 				statusMsg.setEnabled(false);
 				
-				_viewModel.sendStatusCommandAsync(new Func<Void, Void>() {
+				_viewModel.sendStatusCommandAsync(new Action<Status>() {
 
-					@Override
-					public Void execute(Void param) {
+					public void execute(Status param) {
 						statusMsg.setText("");
 						statusMsg.setEnabled(true);
 						send.setEnabled(true);
-						return null;
 					}
 				});
 			}

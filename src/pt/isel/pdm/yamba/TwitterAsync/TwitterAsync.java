@@ -2,15 +2,17 @@ package pt.isel.pdm.yamba.TwitterAsync;
 
 import java.lang.ref.WeakReference;
 
+import pt.isel.pdm.yamba.TwitterAsync.helpers.IntentHelpers;
 import pt.isel.pdm.yamba.TwitterAsync.helpers.StatusContainer;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.StatusPublishedListener;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TwitterExceptionListener;
-import pt.isel.pdm.yamba.TwitterAsync.tasks.GetTimelineAsync;
+import pt.isel.pdm.yamba.TwitterAsync.services.TimelinePullService;
 import pt.isel.pdm.yamba.TwitterAsync.tasks.StatusPublicationAsync;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
 import winterwell.jtwitter.Twitter;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 public class TwitterAsync {
@@ -130,14 +132,16 @@ public class TwitterAsync {
 		_timelineObtainedListener = null;
 	}	
 	
-	public AsyncTask<?, ?, ?> getUserTimelineAsync(Context context) {
+	public void getUserTimelineAsync(Context context) {		
+		Intent intent = IntentHelpers.generateIntent(context, TimelinePullService.class);
 
-		return new GetTimelineAsync(this).execute();
+		context.startService(intent);
 	}
 	
-	public AsyncTask<?, ?, ?> getUserTimelineAsync(Context context, String user) {
+	public void getUserTimelineAsync(Context context, String user) {
+		Intent intent = IntentHelpers.generateIntentWithString(context, TimelinePullService.class, TimelinePullService.PARAM_TAG, user);
 
-		return new GetTimelineAsync(this).execute(user);
+		context.startService(intent);
 	}
 	
 	/*

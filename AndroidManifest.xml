@@ -45,7 +45,7 @@
         </activity>
         
         <service android:enabled="true" android:name="pt.isel.pdm.yamba.services.StatusUploadService" />
-        
+        <service android:name=".TwitterAsync.services.TimelinePullService"></service>
     </application>
 
 </manifest>

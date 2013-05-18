@@ -26,6 +26,15 @@
             android:summary="@string/preferences_timeline_maxtweets_summary"
             android:inputType="number"
             android:key="prefkey_timeline_maxtweets"/>
+   		<CheckBoxPreference
+   		    android:title="@string/preferences_timeline_autorefresh"
+            android:summary="@string/preferences_timeline_autorefresh_summary"
+            android:key="prefkey_timeline_autorefresh" />
+   		<EditTextPreference
+   		    android:title="@string/preferences_timeline_autorefreshrate"
+            android:summary="@string/preferences_timeline_autorefreshrate_summary"
+            android:inputType="number"
+            android:key="prefkey_timeline_autorefreshrate"/>
 
   	</PreferenceCategory>
   	
