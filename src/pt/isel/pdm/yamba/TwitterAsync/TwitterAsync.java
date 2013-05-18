@@ -4,16 +4,19 @@ import java.lang.ref.WeakReference;
 
 import pt.isel.pdm.yamba.TwitterAsync.helpers.IntentHelpers;
 import pt.isel.pdm.yamba.TwitterAsync.helpers.StatusContainer;
+import pt.isel.pdm.yamba.TwitterAsync.listeners.GetUserInfoCompletedListener;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.StatusPublishedListener;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.TwitterExceptionListener;
 import pt.isel.pdm.yamba.TwitterAsync.services.TimelinePullService;
+import pt.isel.pdm.yamba.TwitterAsync.tasks.GetUserAsync;
 import pt.isel.pdm.yamba.TwitterAsync.tasks.StatusPublicationAsync;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
 import winterwell.jtwitter.Twitter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class TwitterAsync {
 		
@@ -145,6 +148,29 @@ public class TwitterAsync {
 	}
 	
 	/*
+	 * GET USERINFO
+	 */
+	private WeakReference<GetUserInfoCompletedListener> _getUserInfoObtainedListener;
+	
+	public synchronized void setUserInfoObtainedListener(GetUserInfoCompletedListener listener) {
+				
+		_getUserInfoObtainedListener = new WeakReference<GetUserInfoCompletedListener>(listener);
+	}
+	
+	public synchronized GetUserInfoCompletedListener getUserInfoObtainedListener() {
+		return _getUserInfoObtainedListener.get();
+	}
+	
+	public synchronized void clearUserInfoCompletedListener() {
+		_getUserInfoObtainedListener = null;
+	}	
+	
+	public void getUserInfoAsync(Context context) {		
+
+		new GetUserAsync(this).execute();	
+	}
+	
+	/*
 	 * SINGLETON
 	 */
 	
@@ -153,6 +179,7 @@ public class TwitterAsync {
 	public synchronized static TwitterAsync connect() {
 		
 		if(_Instance == null) {
+			Log.d("TwitterAsync", "" + _Username + " - " + _Password + " - " + _ServiceUri);
 			_Instance = new TwitterAsync(_Username, _Password);
 		}
 		

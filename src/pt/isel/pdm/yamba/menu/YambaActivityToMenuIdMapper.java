@@ -8,6 +8,7 @@ import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.views.PreferencesActivity;
 import pt.isel.pdm.yamba.views.StatusActivity;
 import pt.isel.pdm.yamba.views.TimelineActivity;
+import pt.isel.pdm.yamba.views.UserInfoActivity;
 import android.app.Activity;
 
 public class YambaActivityToMenuIdMapper {
@@ -20,6 +21,7 @@ public class YambaActivityToMenuIdMapper {
 		_activityToMenuIdMapper.put(StatusActivity.class, R.id.action_status);
 		_activityToMenuIdMapper.put(PreferencesActivity.class, R.id.action_preferences);
 		_activityToMenuIdMapper.put(TimelineActivity.class, R.id.action_timeline);
+		_activityToMenuIdMapper.put(UserInfoActivity.class, R.id.action_userinfo);
 	}
 	
 	private YambaActivityToMenuIdMapper() {

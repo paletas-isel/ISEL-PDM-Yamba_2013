@@ -1,6 +1,5 @@
 package pt.isel.pdm.yamba.TwitterAsync.services;
 
-import pt.isel.pdm.yamba.TwitterAsync.AsyncUserInfoParams;
 import pt.isel.pdm.yamba.TwitterAsync.listeners.GetUserInfoCompletedListener;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
@@ -21,6 +20,7 @@ public class AsyncUserInfoPullService implements ServiceConnection, AsyncUserInf
 	}
 	
 	private Messenger _userInfoPullService;
+	private GetUserInfoCompletedListener _listener;
 	
 	private void sendOperation(int op, Messenger callback) {
 		
@@ -43,6 +43,21 @@ public class AsyncUserInfoPullService implements ServiceConnection, AsyncUserInf
 	@Override
 	public void onServiceConnected(ComponentName arg0, IBinder arg1) {
 		_userInfoPullService = new Messenger(arg1);
+		
+		sendOperation
+		(
+			UserInfoPullService.GET_USER_INFO,
+			new Messenger( 
+				new Handler() {
+					public void handleMessage(Message msg) {
+						_listener.onGetUsernameCompleted(msg.getData().getString(UserInfoPullService.GET_USER_NAME_BUNDLE_KEY));
+						_listener.onGetStatusCountCompleted(msg.getData().getInt(UserInfoPullService.GET_STATUS_COUNT_BUNDLE_KEY));
+						_listener.onGetSubscribersCountCompleted(msg.getData().getInt(UserInfoPullService.GET_SUBSCRIBERS_COUNT_BUNDLE_KEY));
+						_listener.onGetSubscriptionsCountCompleted(msg.getData().getInt(UserInfoPullService.GET_SUBSCRIPTIONS_COUNT_BUNDLE_KEY));
+					}
+				}
+			)
+		);	
 	}
 
 	@Override
@@ -52,6 +67,7 @@ public class AsyncUserInfoPullService implements ServiceConnection, AsyncUserInf
 
 	@Override
 	public void getUserInfo(final GetUserInfoCompletedListener listener) {
+		_listener = listener;
 		
 		sendOperation
 		(
@@ -59,13 +75,13 @@ public class AsyncUserInfoPullService implements ServiceConnection, AsyncUserInf
 			new Messenger( 
 				new Handler() {
 					public void handleMessage(Message msg) {
-						listener.onGetUsernameCompleted(msg.getData().getString(UserInfoPullService.GET_USER_NAME_BUNDLE_KEY));
-						listener.onGetStatusCountCompleted(msg.getData().getInt(UserInfoPullService.GET_STATUS_COUNT_BUNDLE_KEY));
-						listener.onGetSubscribersCountCompleted(msg.getData().getInt(UserInfoPullService.GET_SUBSCRIBERS_COUNT_BUNDLE_KEY));
-						listener.onGetSubscriptionsCountCompleted(msg.getData().getInt(UserInfoPullService.GET_SUBSCRIPTIONS_COUNT_BUNDLE_KEY));
+						_listener.onGetUsernameCompleted(msg.getData().getString(UserInfoPullService.GET_USER_NAME_BUNDLE_KEY));
+						_listener.onGetStatusCountCompleted(msg.getData().getInt(UserInfoPullService.GET_STATUS_COUNT_BUNDLE_KEY));
+						_listener.onGetSubscribersCountCompleted(msg.getData().getInt(UserInfoPullService.GET_SUBSCRIBERS_COUNT_BUNDLE_KEY));
+						_listener.onGetSubscriptionsCountCompleted(msg.getData().getInt(UserInfoPullService.GET_SUBSCRIPTIONS_COUNT_BUNDLE_KEY));
 					}
 				}
 			)
-		);
+		);		
 	}
 }

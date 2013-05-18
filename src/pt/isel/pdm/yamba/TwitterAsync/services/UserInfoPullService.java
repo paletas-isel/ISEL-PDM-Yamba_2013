@@ -2,7 +2,9 @@ package pt.isel.pdm.yamba.TwitterAsync.services;
 
 import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
 import pt.isel.pdm.yamba.TwitterAsync.helpers.UserInfoParams;
+import pt.isel.pdm.yamba.TwitterAsync.listeners.GetUserInfoCompletedListener;
 import winterwell.jtwitter.Twitter;
+import winterwell.jtwitter.Twitter.User;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,15 +15,13 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-public class UserInfoPullService extends Service implements UserInfoParams {
+public class UserInfoPullService extends Service {
 	private static final String TAG = UserInfoPullService.class.getName();
 
 	private static void log(String txt) {
 		Log.v(TAG, "Service pid=" + android.os.Process.myPid() + " thr="
 				+ Thread.currentThread().getId() + ": " + txt);
 	}
-
-	private Twitter.User _user;
 
 	public static final int GET_USER_INFO = 0;
 
@@ -31,28 +31,66 @@ public class UserInfoPullService extends Service implements UserInfoParams {
 			GET_SUBSCRIBERS_COUNT_BUNDLE_KEY = "Subscribers",
 			GET_SUBSCRIPTIONS_COUNT_BUNDLE_KEY = "Subscriptions";
 
-	private Messenger _messenger = new Messenger(new UserInfoPullOperations());
+	private static UserInfoPullOperations _handlerClass;
+	private Messenger _messenger;
 
 	public class UserInfoPullOperations extends Handler {
+
+		private Messenger _replyMessenger;
+		private int _replyWhat;
+		
+		public UserInfoPullOperations() {
+			log("Creating UserInfoPullOperations");
+			TwitterAsync.connect().setUserInfoObtainedListener(_listener);			
+		}
+		
+		private final GetUserInfoCompletedListener _listener = new GetUserInfoCompletedListener() {
+			
+			@Override
+			public void onGetUsernameCompleted(String username) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onGetUserInfoCompleted(User user) {
+				sendResponse(
+						_replyMessenger, _replyWhat, 
+						user.getName(), 
+						user.getStatusesCount(),
+						user.getFollowersCount(), 
+						user.getFriendsCount()
+				);
+			}
+			
+			@Override
+			public void onGetSubscriptionsCountCompleted(int subscriptions) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onGetSubscribersCountCompleted(int subscribers) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onGetStatusCountCompleted(int status) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
 		@Override
 		public void handleMessage(Message msg) {
 
 			switch (msg.what) {
-			case GET_USER_INFO:
-
-				UserInfoPullService.this._user = TwitterAsync.connect()
-						.getInnerConnection()
-						.getUser(TwitterAsync.getUsername());
-
-				sendResponse(
-						msg, 
-						getUserName(), 
-						getStatusCount(),
-						getSubscribersCount(), 
-						getSubscriptionsCount()
-				);
+			case GET_USER_INFO:		
 				
-				_user = null;
+				_replyMessenger = msg.replyTo;
+				_replyWhat = msg.what;
+				TwitterAsync.connect().getUserInfoAsync(UserInfoPullService.this);
 				
 				break;
 
@@ -62,7 +100,8 @@ public class UserInfoPullService extends Service implements UserInfoParams {
 		}
 
 		private void sendResponse(
-				Message msg, 
+				Messenger replyTo,
+				int replyWhat,
 				String username, 
 				int status,
 				int subscribers, 
@@ -71,7 +110,7 @@ public class UserInfoPullService extends Service implements UserInfoParams {
 
 			try {
 				Message mResp = Message.obtain();
-				mResp.what = msg.what;
+				mResp.what = replyWhat;
 
 				Bundle bundle = new Bundle();
 				
@@ -81,35 +120,22 @@ public class UserInfoPullService extends Service implements UserInfoParams {
 				bundle.putInt(GET_SUBSCRIPTIONS_COUNT_BUNDLE_KEY, subscriptions);
 						
 				mResp.setData(bundle);
-				msg.replyTo.send(mResp);
+				replyTo.send(mResp);
 			} catch (RemoteException e) {
 				Log.e(TAG, "Error send resp. e=" + e);
 			}
 		}
 	}
+	
+	@Override
+	public void onCreate() {
+		if(_handlerClass == null) _handlerClass = new UserInfoPullOperations();
+		_messenger = new Messenger(_handlerClass);
+		super.onCreate();
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return _messenger.getBinder();
-	}
-
-	@Override
-	public String getUserName() {
-		return TwitterAsync.getUsername();
-	}
-
-	@Override
-	public int getStatusCount() {
-		return _user.getStatusesCount();
-	}
-
-	@Override
-	public int getSubscribersCount() {
-		return _user.getFollowersCount();
-	}
-
-	@Override
-	public int getSubscriptionsCount() {
-		return _user.getFriendsCount();
 	}
 }

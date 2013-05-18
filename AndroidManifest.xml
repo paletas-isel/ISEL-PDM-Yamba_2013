@@ -46,8 +46,8 @@
         
         <service android:enabled="true" android:name=".TwitterAsync.services.StatusUploadService" />
         <service android:name=".TwitterAsync.services.TimelinePullService"></service>
-        <service android:name=".TwitterAsync.services.UserInfoPullService"></service>
-        <service android:name=".TwitterAsync.services.AsyncUserInfoPullService"></service>
+        <service android:name=".TwitterAsync.services.UserInfoPullService" ></service>
+        <activity android:name=".views.UserInfoActivity" android:label="@string/title_activity_userinfo"></activity>
     </application>
 
 </manifest>
