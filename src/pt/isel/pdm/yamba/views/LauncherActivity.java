@@ -1,6 +1,6 @@
 package pt.isel.pdm.yamba.views;
 
-import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
+import pt.isel.pdm.yamba.twitter.TwitterAsync;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

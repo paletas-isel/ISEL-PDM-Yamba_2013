@@ -1,4 +1,4 @@
-package pt.isel.pdm.yamba.TwitterAsync;
+package pt.isel.pdm.yamba.twitter;
 
 import pt.isel.pdm.yamba.exceptions.BadCredentialsException;
 import pt.isel.pdm.yamba.exceptions.ExceptionWrapper;

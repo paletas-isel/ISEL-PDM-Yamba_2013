@@ -1,9 +1,9 @@
 package pt.isel.pdm.yamba.views;
 
 import pt.isel.pdm.yamba.R;
-import pt.isel.pdm.yamba.TwitterAsync.listeners.GetUserInfoCompletedListener;
-import pt.isel.pdm.yamba.TwitterAsync.services.AsyncUserInfoPullService;
-import pt.isel.pdm.yamba.TwitterAsync.services.UserInfoPullService;
+import pt.isel.pdm.yamba.twitter.listeners.GetUserInfoCompletedListener;
+import pt.isel.pdm.yamba.twitter.services.AsyncUserInfoPullService;
+import pt.isel.pdm.yamba.twitter.services.UserInfoPullService;
 import winterwell.jtwitter.Twitter.User;
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package pt.isel.pdm.yamba.TwitterAsync.services;
+package pt.isel.pdm.yamba.twitter.services;
 
 import java.util.Collection;
 import java.util.LinkedList;

@@ -1,4 +1,4 @@
-package pt.isel.pdm.yamba.TwitterAsync.helpers;
+package pt.isel.pdm.yamba.twitter.helpers;
 
 import android.content.Context;
 import android.content.Intent;

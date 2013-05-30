@@ -1,8 +1,8 @@
-package pt.isel.pdm.yamba.TwitterAsync.tasks;
+package pt.isel.pdm.yamba.twitter.tasks;
 
-import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
-import pt.isel.pdm.yamba.TwitterAsync.TwitterAsyncTask;
-import pt.isel.pdm.yamba.TwitterAsync.listeners.GetUserInfoCompletedListener;
+import pt.isel.pdm.yamba.twitter.TwitterAsync;
+import pt.isel.pdm.yamba.twitter.TwitterAsyncTask;
+import pt.isel.pdm.yamba.twitter.listeners.GetUserInfoCompletedListener;
 import winterwell.jtwitter.Twitter;
 import winterwell.jtwitter.Twitter.User;
 

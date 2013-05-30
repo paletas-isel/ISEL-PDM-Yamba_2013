@@ -1,11 +1,11 @@
-package pt.isel.pdm.yamba.TwitterAsync.services;
+package pt.isel.pdm.yamba.twitter.services;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import pt.isel.java.Action;
-import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
-import pt.isel.pdm.yamba.TwitterAsync.listeners.TimelineObtainedListener;
+import pt.isel.pdm.yamba.twitter.TwitterAsync;
+import pt.isel.pdm.yamba.twitter.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import winterwell.jtwitter.Twitter;
 import android.app.Service;

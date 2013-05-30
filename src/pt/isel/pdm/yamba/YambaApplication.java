@@ -5,10 +5,10 @@ import java.util.LinkedList;
 
 import pt.isel.android.content.SharedPreferencesListener;
 import pt.isel.java.Action;
-import pt.isel.pdm.yamba.TwitterAsync.TwitterAsync;
-import pt.isel.pdm.yamba.TwitterAsync.listeners.TwitterExceptionListener;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
 import pt.isel.pdm.yamba.settings.Settings;
+import pt.isel.pdm.yamba.twitter.TwitterAsync;
+import pt.isel.pdm.yamba.twitter.listeners.TwitterExceptionListener;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
