@@ -48,6 +48,7 @@
         <service android:name="pt.isel.pdm.yamba.twitter.services.TimelinePullService"></service>
         <service android:name="pt.isel.pdm.yamba.twitter.services.UserInfoPullService" ></service>
         <activity android:name=".views.UserInfoActivity" android:label="@string/title_activity_userinfo"></activity>
+        <provider android:authorities="@string/content_authority" android:name=".content.YambaTweetsProvider"></provider>
     </application>
 
 </manifest>

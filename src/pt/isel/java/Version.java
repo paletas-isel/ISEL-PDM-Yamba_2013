@@ -30,7 +30,7 @@ public class Version {
 	
 	@SuppressLint("DefaultLocale")
 	public int toSQLiteVersion() {
-		return Integer.parseInt(String.format("%d.3%d.3%d.3", _major, _minor, _revision));
+		return Integer.parseInt(String.format("%3d%3d%3d", _major, _minor, _revision).replace(' ', '0'));
 	}
 	
 	public static Version fromSQLiteVersion(int version) {

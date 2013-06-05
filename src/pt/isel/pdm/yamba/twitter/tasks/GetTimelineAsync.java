@@ -2,6 +2,7 @@ package pt.isel.pdm.yamba.twitter.tasks;
 
 import java.util.List;
 
+import pt.isel.pdm.yamba.data.model.TimelineStatus;
 import pt.isel.pdm.yamba.twitter.TwitterAsync;
 import pt.isel.pdm.yamba.twitter.TwitterAsyncTask;
 import pt.isel.pdm.yamba.twitter.listeners.TimelineObtainedListener;
@@ -46,7 +47,7 @@ public class GetTimelineAsync extends TwitterAsyncTask<String, List<winterwell.j
 		TimelineObtainedListener listener = getTwitterAsync().getTimelineObtainedListener();
 		if(listener != null) {
 			for(List<winterwell.jtwitter.Twitter.Status> value : values) {
-				listener.onTimelineObtained(value);
+				listener.onTimelineObtained(TimelineStatus.from(value));
 			}		
 		}
 		

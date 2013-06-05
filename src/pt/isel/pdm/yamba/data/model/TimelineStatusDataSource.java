@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class TimelineStatusDataSource implements DatabaseTable {
 
-	public static final String[] COLUMNS = new String[] { "ID", "MESSAGE", "PUBLICATION_DATE" };
+	public static final String[] COLUMNS = new String[] { "ID", "SERVERID", "MESSAGE", "PUBLICATION_DATE", "REPLY_TO", "PUBLISHED" };
 	public static final String TABLE_NAME = "Timeline";
 	
 	@Override
@@ -38,11 +38,13 @@ public class TimelineStatusDataSource implements DatabaseTable {
 	private DatabaseManager _dbHelper;
 
 	private static int ID_COLUMNIDX = 0;
-	private static int MESSAGE_COLUMNIDX = 1;
-	private static int PUBLICATIONDATE_COLUMNIDX = 2;
-	private static int REPLYTO_COLUMNIDX = 3;
-	private static int PUBLISHED_COLUMNIDX = 4;
+	private static int SERVERID_COLUMNIDX = 1;
+	private static int MESSAGE_COLUMNIDX = 2;
+	private static int PUBLICATIONDATE_COLUMNIDX = 3;
+	private static int REPLYTO_COLUMNIDX = 4;
+	private static int PUBLISHED_COLUMNIDX = 5;
 	public static String ID_COLUMN = COLUMNS[ID_COLUMNIDX];
+	public static String SERVERID_COLUMN = COLUMNS[SERVERID_COLUMNIDX];
 	public static String MESSAGE_COLUMN = COLUMNS[MESSAGE_COLUMNIDX];
 	public static String PUBLICATIONDATE_COLUMN = COLUMNS[PUBLICATIONDATE_COLUMNIDX];
 	public static String REPLYTO_COLUMN = COLUMNS[REPLYTO_COLUMNIDX];
@@ -57,22 +59,38 @@ public class TimelineStatusDataSource implements DatabaseTable {
 	}
 
 	public void close() {
+		_database.close();
 		_dbHelper.close();
 	}
+	
+	private Cursor queryByServerId(long serverId) {
+		return _database.query(getTableName(), getColumns(), SERVERID_COLUMN + " = " + serverId, null, null, null, null);
+	}
+	
+	public boolean existsStatus(long serverId) {
+		Cursor cursor = queryByServerId(serverId);
+		return cursor.getCount() > 0;
+	}
 
-	public TimelineStatus createStatus(String message, Date publicationDate, int replyTo, boolean published) {
-		ContentValues values = new ContentValues();
-		values.put(TimelineStatusDataSource.MESSAGE_COLUMN, message);
-		values.put(TimelineStatusDataSource.PUBLICATIONDATE_COLUMN, df.format(publicationDate));
-		values.put(TimelineStatusDataSource.REPLYTO_COLUMN, replyTo);
-		values.put(TimelineStatusDataSource.PUBLISHED_COLUMN, published);		
-		long insertId = _database.insert(getTableName(), null, values);
-		
-		Cursor cursor = _database.query(getTableName(), getColumns(), ID_COLUMN + " = " + insertId, null, null, null, null);
+	public TimelineStatus getStatus(long serverId) {
+		Cursor cursor = queryByServerId(serverId);
 		cursor.moveToFirst();
-		TimelineStatus newComment = cursorToStatus(cursor);
+		TimelineStatus status = cursorToStatus(cursor);
 		cursor.close();
-		return newComment;
+		return status;
+	}
+
+	public TimelineStatus createStatus(TimelineStatus status) {
+		if(!existsStatus(status.getServerID())) {
+			ContentValues values = getValues(status);	
+			long insertId = _database.insert(getTableName(), null, values);
+			
+			Cursor cursor = _database.query(getTableName(), getColumns(), ID_COLUMN + " = " + insertId, null, null, null, null);
+			cursor.moveToFirst();
+			status = cursorToStatus(cursor);
+			cursor.close();
+		}
+		return status;
 	}
 
 	public void deleteStatus(TimelineStatus status) {
@@ -80,20 +98,24 @@ public class TimelineStatusDataSource implements DatabaseTable {
 		_database.delete(getTableName(), ID_COLUMN + " = " + id, null);
 	}
 
-	public List<TimelineStatus> getAllComments() {
-		List<TimelineStatus> statuses = new ArrayList<TimelineStatus>();
-
-		Cursor cursor = _database.query(getTableName(), getColumns(), null, null, null, null, null);
-		cursor.moveToFirst();
+	public List<TimelineStatus> getTimeline() {
+		Cursor queryResult = _database.query(
+			getTableName(), 
+			getColumns(), 
+			null, 
+			null, 
+			null,
+			null,
+			TimelineStatusDataSource.PUBLICATIONDATE_COLUMN
+		);
 		
-		while (!cursor.isAfterLast()) {
-			TimelineStatus status = cursorToStatus(cursor);
-			statuses.add(status);
-			cursor.moveToNext();
+		List<TimelineStatus> timeline = new ArrayList<TimelineStatus>();
+		while(queryResult.moveToNext()) {
+			timeline.add(TimelineStatusDataSource.cursorToStatus(queryResult));
 		}
-		// Make sure to close the cursor
-		cursor.close();
-		return statuses;
+		queryResult.close();
+		
+		return timeline;
 	}
 
 	private static TimelineStatus cursorToStatus(Cursor cursor) {
@@ -101,6 +123,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 		try {
 			status = new TimelineStatus
 			(
+				cursor.getLong(SERVERID_COLUMNIDX),
 				cursor.getString(MESSAGE_COLUMNIDX), 
 				df.parse(cursor.getString(PUBLICATIONDATE_COLUMNIDX)),
 				cursor.getInt(REPLYTO_COLUMNIDX),
@@ -109,6 +132,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 		} catch (ParseException e) {
 			status = new TimelineStatus
 			(
+				cursor.getLong(SERVERID_COLUMNIDX),
 				cursor.getString(MESSAGE_COLUMNIDX), 
 				new Date(),
 				cursor.getInt(REPLYTO_COLUMNIDX),
@@ -117,5 +141,21 @@ public class TimelineStatusDataSource implements DatabaseTable {
 		}
 		status.setID(cursor.getLong(ID_COLUMNIDX));
 		return status;
+	}
+	
+	private static ContentValues getValues(TimelineStatus status) {
+		ContentValues values = new ContentValues();
+		values.put(SERVERID_COLUMN, status.getServerID());
+		values.put(MESSAGE_COLUMN, status.getMessage());
+		values.put(PUBLICATIONDATE_COLUMN,  df.format(status.getDate()));
+		values.put(REPLYTO_COLUMN, status.getReplyTo());
+		values.put(PUBLISHED_COLUMN,status.isPublished());
+		return values;
+	}
+	
+	private static ContentValues getValuesWithID(TimelineStatus status) {
+		ContentValues values = getValues(status);
+		values.put(ID_COLUMN, status.getID());
+		return values;
 	}
 }

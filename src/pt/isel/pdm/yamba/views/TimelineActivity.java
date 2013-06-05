@@ -7,13 +7,13 @@ import java.util.Date;
 import pt.isel.java.Action;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.TweetDateFormat;
+import pt.isel.pdm.yamba.data.model.TimelineStatus;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
 import pt.isel.pdm.yamba.twitter.TwitterAsync;
 import pt.isel.pdm.yamba.twitter.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.twitter.listeners.TwitterExceptionListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
-import winterwell.jtwitter.Twitter.Status;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -225,13 +225,13 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	}
 
 	@Override
-	public void onTimelineObtained(Iterable<Status> timeline) {		
+	public void onTimelineObtained(Iterable<TimelineStatus> timeline) {		
 		_viewModel.setRefreshing(false);
 		int count = 0;
 		ArrayList<TweetViewModel> tweets = new ArrayList<TweetViewModel>();		
-		for(Status s : timeline) {
+		for(TimelineStatus s : timeline) {
 			if(++count < _viewModel.getMaxSavedTweets()) {
-				tweets.add(new TweetViewModel(s.id, s.text, s.user.name, s.createdAt));
+				tweets.add(new TweetViewModel(s.getID(), s.getMessage(), s.getUsername(), s.getDate()));
 			}
 		}		
 		updateViewModel(tweets);

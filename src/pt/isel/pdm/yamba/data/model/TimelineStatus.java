@@ -1,26 +1,33 @@
 package pt.isel.pdm.yamba.data.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import winterwell.jtwitter.Twitter;
+import winterwell.jtwitter.Twitter.Status;
 
 public class TimelineStatus {
 	private long _id;
-	private String _message;
+	private long _serverId;
+	private String _message, _username;
 	private Date _publicationDate;
-	private int _replyTo;
+	private long _replyTo;
 	private boolean _published;
 
-	public TimelineStatus(String message, Date publicationDate) {
+	public TimelineStatus(long serverId, String message, Date publicationDate) {
+		_serverId = serverId;
 		_message = message;
 		_publicationDate = publicationDate;
 	}
 	
-	public TimelineStatus(String message, Date publicationDate, int replyTo) {
-		this(message, publicationDate);
+	public TimelineStatus(long serverId, String message, Date publicationDate, int replyTo) {
+		this(serverId, message, publicationDate);
 		_replyTo = replyTo;
 	}
 	
-	public TimelineStatus(String message, Date publicationDate, int replyTo, boolean published) {
-		this(message, publicationDate, replyTo);
+	public TimelineStatus(long serverId, String message, Date publicationDate, int replyTo, boolean published) {
+		this(serverId, message, publicationDate, replyTo);
 		_published = published;
 	}
 	
@@ -30,6 +37,22 @@ public class TimelineStatus {
 	
 	public void setID(long id) {
 		_id = id;
+	}
+	
+	public long getServerID() {
+		return _serverId;
+	}
+	
+	public void setServerID(long id) {
+		_serverId = id;
+	}
+	
+	public String getUsername() {
+		return _username;
+	}
+	
+	public void setUsername(String username) {
+		_username = username;
 	}
 	
 	public String getMessage() {
@@ -48,11 +71,11 @@ public class TimelineStatus {
 		_publicationDate = publicationDate;
 	}
 	
-	public int getReplyTo() {
+	public long getReplyTo() {
 		return _replyTo;
 	}
 	
-	public void setReplyTo(int replyTo) {
+	public void setReplyTo(long replyTo) {
 		_replyTo = replyTo;
 	}
 	
@@ -62,5 +85,24 @@ public class TimelineStatus {
 	
 	public void setPublished(boolean published) {
 		_published = published;
+	}
+	
+	public static TimelineStatus from(Twitter.Status status) {
+		TimelineStatus timelineStatus = new TimelineStatus(status.getId(), status.getText(), status.getCreatedAt());
+		if(status.inReplyToStatusId == null)
+			timelineStatus.setReplyTo(0);
+		else
+			timelineStatus.setReplyTo(status.inReplyToStatusId);
+		timelineStatus.setUsername(status.getUser().getName());
+		timelineStatus.setPublished(true);
+		return timelineStatus;
+	}
+	
+	public static List<TimelineStatus> from(Iterable<Status> statuses) {
+		List<TimelineStatus> timeline = new ArrayList<TimelineStatus>();
+		for(Status status : statuses) {
+			timeline.add(TimelineStatus.from(status));
+		}
+		return timeline;
 	}
 }

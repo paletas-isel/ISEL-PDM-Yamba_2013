@@ -1,9 +1,9 @@
 package pt.isel.pdm.yamba.twitter.listeners;
 
-import winterwell.jtwitter.Twitter.Status;
+import pt.isel.pdm.yamba.data.model.TimelineStatus;
 
 public interface TimelineObtainedListener {
 
-	public void onTimelineObtained(Iterable<Status> timeline);
+	public void onTimelineObtained(Iterable<TimelineStatus> timeline);
 	
 }

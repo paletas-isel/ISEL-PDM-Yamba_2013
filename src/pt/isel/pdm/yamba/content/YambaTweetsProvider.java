@@ -4,6 +4,7 @@ import pt.isel.pdm.yamba.data.DatabaseManager;
 import pt.isel.pdm.yamba.data.model.TimelineStatusDataSource;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -12,7 +13,19 @@ import android.net.Uri;
 public class YambaTweetsProvider extends ContentProvider {
 
 	private DatabaseManager _manager;
-	private static String BASE_PATH = "/yamba/timeline/";
+	
+	private static final String AUTHORITY = "vnd.android.cursor.item.timeline";
+	private static final String BASE_PATH = "content://" + AUTHORITY + "/yamba/timeline/";
+	public static final String ID_QUERY_PATH = BASE_PATH + "id";
+	private static final int ID_QUERY_PATH_CODE = 1;
+	public static final String ALL_QUERY_PATH = BASE_PATH;
+	private static final int ALL_QUERY_PATH_CODE = 2;
+	
+	private static UriMatcher ACTION_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+	static {
+		ACTION_MATCHER.addURI(AUTHORITY, ID_QUERY_PATH, ID_QUERY_PATH_CODE);
+		ACTION_MATCHER.addURI(AUTHORITY, ALL_QUERY_PATH, ALL_QUERY_PATH_CODE);
+	}
 
 	@Override
 	public int delete(Uri uri, String whereClause, String[] whereArgs) {
@@ -24,7 +37,7 @@ public class YambaTweetsProvider extends ContentProvider {
 
 	@Override
 	public String getType(Uri arg0) {
-		return "vnd.android.cursor.item.timeline_status";
+		return AUTHORITY;
 	}
 
 	@Override
@@ -46,8 +59,14 @@ public class YambaTweetsProvider extends ContentProvider {
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
 	    queryBuilder.setTables(TimelineStatusDataSource.TABLE_NAME);
-	    queryBuilder.appendWhere(TimelineStatusDataSource.ID_COLUMN + "=" + uri.getLastPathSegment());
 
+	    switch(ACTION_MATCHER.match(uri)) 
+	    {
+		    case ID_QUERY_PATH_CODE : 
+		    	queryBuilder.appendWhere(TimelineStatusDataSource.ID_COLUMN + "=" + uri.getLastPathSegment());
+		    	break;
+	    }
+	    
 	    SQLiteDatabase db = _manager.getWritableDatabase();
 	    Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 	    cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -63,5 +82,4 @@ public class YambaTweetsProvider extends ContentProvider {
 	    getContext().getContentResolver().notifyChange(uri, null);
 	    return rowsUpdated;
 	}
-
 }
