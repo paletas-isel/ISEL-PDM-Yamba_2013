@@ -106,7 +106,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 			null, 
 			null,
 			null,
-			TimelineStatusDataSource.PUBLICATIONDATE_COLUMN
+			TimelineStatusDataSource.PUBLICATIONDATE_COLUMN + " DESC"
 		);
 		
 		List<TimelineStatus> timeline = new ArrayList<TimelineStatus>();

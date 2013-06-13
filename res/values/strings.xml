@@ -10,6 +10,7 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_preferences">Preferences</string>
     <string name="action_status_send">Send Action</string>
+    <string name="action_sendtimeline_email">Mail the timeline</string>
     <string name="action_userinfo">Info</string>
     <string name="loading">Loading &#8230;</string>
     <string name="title_activity_details">DetailsActivity</string>
@@ -52,4 +53,11 @@
     <string name="userInfoDefaultSubscriptions">0</string>
     <string name="userInfoSubscribersLabel">Subscribers</string>
     <string name="userInfoDefaultSubscribers">0</string>
+    
+    <string name="mail_destinary_title">Destinatary</string>
+    <string name="mail_destinary_desc">Send to:</string>
+    <string name="mail_destinary_okbutton">OK</string>
+    <string name="mail_timeline_subject" formatted="false">%s\'s timeline (Date: %s).</string>
+    <string name="mail_timeline_body_tweet" formatted="false">Tweet: %s, from: %s.</string>
+    <string name="mail_send_error">Mail not sent because you didn\'t pick a valid destinatary.</string>
 </resources>

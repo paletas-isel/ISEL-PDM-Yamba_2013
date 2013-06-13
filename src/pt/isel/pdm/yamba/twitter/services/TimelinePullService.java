@@ -15,6 +15,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 public class TimelinePullService extends YambaBaseService {
 
@@ -108,16 +109,19 @@ public class TimelinePullService extends YambaBaseService {
 
 			@Override
 			public void run() {
+				Log.d(getClass().getName(), "Obtaining timeline from the service..");
+				
 				Twitter connection = _twitterAsync.getInnerConnection();
 				
 				_timeline = TimelineStatus.from(connection.getUserTimeline().subList(0, _viewModel.getMaxSavedTweets()));
+				
+				Log.d(getClass().getName(), "Timeline obtained, updating in memory statuses..");
 										
 				_handler.post(new Thread() {
 					
 					@Override
-					public void run() {
-						  
-						saveStatuses(_timeline);
+					public void run() {						  
+						updateSavedStatus(_timeline, _viewModel.getMaxSavedTweets());
 						
 						TimelineObtainedListener listener = _twitterAsync.getTimelineObtainedListener();
 						if(listener != null && _timeline != null) {
@@ -125,9 +129,43 @@ public class TimelinePullService extends YambaBaseService {
 						}
 					}
 					
-					private void saveStatuses(Iterable<TimelineStatus> statuses) {
+					private void updateSavedStatus(Iterable<TimelineStatus> downloadedTimeline, int maxSaved) {
+						Log.d(getClass().getName(), String.format("Updating saved statuses (Max. Allowed %d)..", maxSaved));
+
+						List<TimelineStatus> timeline = _dataSource.getTimeline();
+						
+						if(!timeline.isEmpty()) {
+							TimelineStatus first = timeline.get(0);
+							int savedCount = saveStatuses(downloadedTimeline, first);
+							int totalSaved = timeline.size() + savedCount;
+							if(totalSaved > maxSaved)
+								deleteLastStatuses(timeline, maxSaved, totalSaved - savedCount);
+						}
+						else {
+							saveStatuses(downloadedTimeline, null);
+						}
+					}
+					
+					private int saveStatuses(Iterable<TimelineStatus> statuses, TimelineStatus lastSavedStatus) {
+						Log.d(getClass().getName(), "Saving new statuses..");
+						
+						int saved = 0;
 						for(TimelineStatus status : statuses) {
-							_dataSource.createStatus(status);
+							if(lastSavedStatus == null || status.getDate().compareTo(lastSavedStatus.getDate()) > 0) {
+								_dataSource.createStatus(status);
+								saved++;
+							}
+						}
+
+						Log.d(getClass().getName(), String.format("Saved new %d statuses!", saved));
+						
+						return saved;
+					}
+					
+					private void deleteLastStatuses(List<TimelineStatus> statuses, int maxSaved, int toDelete) {
+						Log.d(getClass().getName(), String.format("Deleting %d excess statuses..", toDelete));
+						for(TimelineStatus status : statuses.subList(statuses.size() - toDelete, statuses.size())) {
+							_dataSource.deleteStatus(status);
 						}
 					}
 				});
@@ -136,14 +174,12 @@ public class TimelinePullService extends YambaBaseService {
 	}
 	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-				
-		int initialDelay = 0;
+	public int onStartCommand(Intent intent, int flags, int startId) {				
 		if(loadSavedTweets()) {
-			initialDelay = _viewModel.getAutoRefreshRate();
+			_viewModel.getAutoRefreshRate();
 		}
 		
-		startTimer(initialDelay);	
+		startTimer();	
 			
 		return Service.START_REDELIVER_INTENT;
 	}
@@ -163,7 +199,7 @@ public class TimelinePullService extends YambaBaseService {
 		return hasSavedTweets;
 	}
 	
-	private void startTimer(int initialDelay) {
+	private void startTimer() {
 		if(_timer != null) {
 			_task.cancel();
 			_timer.purge();
@@ -172,7 +208,6 @@ public class TimelinePullService extends YambaBaseService {
 			_timer = new Timer();
 		}
 		_task = createTask();		
-		_lastSchedule = System.currentTimeMillis() + (initialDelay - _viewModel.getAutoRefreshRate());
 		
 		if(_viewModel.isAutoRefreshEnabled())
 			scheduleLooped(_task);
@@ -181,7 +216,7 @@ public class TimelinePullService extends YambaBaseService {
 	}
 	
 	private void restartTimer() {
-		startTimer(0);
+		startTimer();
 	}
 	
 	private void scheduleLooped(TimerTask task) {

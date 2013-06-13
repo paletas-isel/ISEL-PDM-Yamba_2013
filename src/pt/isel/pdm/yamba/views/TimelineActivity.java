@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import pt.isel.android.Mailer;
 import pt.isel.java.Action;
 import pt.isel.pdm.yamba.R;
 import pt.isel.pdm.yamba.TweetDateFormat;
@@ -14,6 +15,9 @@ import pt.isel.pdm.yamba.twitter.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.twitter.listeners.TwitterExceptionListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import pt.isel.pdm.yamba.views.models.TweetViewModel;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,8 +29,10 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TimelineActivity extends YambaBaseActivity implements TimelineObtainedListener, OnItemClickListener, TwitterExceptionListener {
 
@@ -169,10 +175,12 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {		
 		final int itemId = item.getItemId();		
-		if(itemId == R.id.action_refresh)
-		{		
+		if(itemId == R.id.action_refresh) {		
 			refreshTimeline();
 		}		
+		else if(itemId == R.id.action_sendtimeline_email) {
+			mailTimeline(_viewModel.getTweets());
+		}
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -257,5 +265,32 @@ public class TimelineActivity extends YambaBaseActivity implements TimelineObtai
 				}				
 			}}
 		);
+	}
+	
+	private void mailTimeline(Iterable<TweetViewModel> timeline) {
+		final String subject = getString(R.string.mail_timeline_subject, TwitterAsync.getUsername(), new Date());
+		final StringBuilder body = new StringBuilder("Timeline: \n");
+		for(TweetViewModel status : timeline) {
+			body.append(getString(R.string.mail_timeline_body_tweet, status.getTweet(), status.getUsername()));
+		}	
+		
+		final EditText input = new EditText(this);
+		new AlertDialog.Builder(TimelineActivity.this)
+		    .setTitle(R.string.mail_destinary_title)
+		    .setMessage(R.string.mail_destinary_desc)
+		    .setPositiveButton(R.string.mail_destinary_okbutton, new OnClickListener() {				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					String destinatary = input.getText().toString();
+					if(destinatary.equals("")) {
+						Toast.makeText(TimelineActivity.this, R.string.mail_send_error, Toast.LENGTH_LONG).show();
+					}
+					else {
+						Mailer.sendEmail(TimelineActivity.this, subject, body.toString(), destinatary);
+					}
+				}
+			})
+		    .setView(input)
+		    .show();
 	}
 }
