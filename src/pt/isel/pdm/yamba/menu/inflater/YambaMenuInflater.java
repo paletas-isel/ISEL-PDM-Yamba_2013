@@ -24,6 +24,7 @@ public class YambaMenuInflater extends MenuInflater {
 		
 		int menuIdToRemove = YambaActivityToMenuIdMapper.getMenuIdForActivity(_class);
 		
-		menu.findItem(menuIdToRemove).setVisible(false);
+		if(menuIdToRemove != 0)
+			menu.findItem(menuIdToRemove).setVisible(false);
 	}
 }

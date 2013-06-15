@@ -10,7 +10,8 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_preferences">Preferences</string>
     <string name="action_status_send">Send Action</string>
-    <string name="action_sendtimeline_email">Mail the timeline</string>
+    <string name="action_sendtimeline_email">Send timeline by email</string>
+    <string name="action_sendstatus_email">Send by email</string>
     <string name="action_userinfo">Info</string>
     <string name="loading">Loading &#8230;</string>
     <string name="title_activity_details">DetailsActivity</string>
