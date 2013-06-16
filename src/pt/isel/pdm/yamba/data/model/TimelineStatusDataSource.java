@@ -120,13 +120,14 @@ public class TimelineStatusDataSource implements DatabaseTable {
 				TimelineStatusDataSource.PUBLICATIONDATE_COLUMN + " DESC"
 			);
 			
-		List<TimelineStatus> timeline = new ArrayList<TimelineStatus>();
+		List<TimelineStatus> unpublished = new ArrayList<TimelineStatus>();
+		
 		while(queryResult.moveToNext()) {
-			timeline.add(TimelineStatusDataSource.cursorToStatus(queryResult));
+			unpublished.add(TimelineStatusDataSource.cursorToStatus(queryResult));
 		}
 		queryResult.close();
 		
-		return timeline;
+		return unpublished;
 	}
 	
 	private static TimelineStatus cursorToStatus(Cursor cursor) {

@@ -112,10 +112,11 @@ public class TimelinePullService extends YambaBaseService {
 			public void run() {
 				Log.d(getClass().getName(), "Obtaining timeline from the service..");
 				
-				final TwitterAsync twitterAsync = TwitterAsync.connect();
-				Twitter connection = twitterAsync.getInnerConnection();
-				
 				try {
+					
+					final TwitterAsync twitterAsync = TwitterAsync.connect();
+					Twitter connection = twitterAsync.getInnerConnection();
+				
 					_timeline = TimelineStatus.from(connection.getUserTimeline().subList(0, _viewModel.getMaxSavedTweets()));
 					
 					Log.d(getClass().getName(), "Timeline obtained, updating in memory statuses..");
