@@ -20,6 +20,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 public class YambaApplication extends Application{
@@ -96,8 +97,15 @@ public class YambaApplication extends Application{
 			
 			@Override
 			public void onExceptionThrown(TwitterException e) {
-				Toast.makeText(YambaApplication.getApplication(), e.getMessage(), Toast.LENGTH_LONG)
+				
+				try {
+					
+					Toast.makeText(YambaApplication.getApplication(), e.getMessage(), Toast.LENGTH_LONG)
 					.show();
+				}
+				catch(Exception ex) {
+					Log.d(this.getClass().getSimpleName(), "Uncaught Exception: " + ex.getStackTrace().toString());
+				}
 			}
 		});
 	

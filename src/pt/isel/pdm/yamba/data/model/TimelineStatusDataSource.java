@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -120,14 +121,21 @@ public class TimelineStatusDataSource implements DatabaseTable {
 				TimelineStatusDataSource.PUBLICATIONDATE_COLUMN + " DESC"
 			);
 			
-		List<TimelineStatus> unpublished = new ArrayList<TimelineStatus>();
+		List<TimelineStatus> statuses = new ArrayList<TimelineStatus>();
 		
-		while(queryResult.moveToNext()) {
-			unpublished.add(TimelineStatusDataSource.cursorToStatus(queryResult));
+		if(!queryResult.moveToFirst()) {
+			return Collections.EMPTY_LIST;
 		}
+		
+		do {
+			
+			statuses.add(TimelineStatusDataSource.cursorToStatus(queryResult));
+
+		} while(queryResult.moveToNext());
+		
 		queryResult.close();
 		
-		return unpublished;
+		return statuses;
 	}
 	
 	private static TimelineStatus cursorToStatus(Cursor cursor) {

@@ -136,7 +136,7 @@ public class TimelinePullService extends YambaBaseService {
 						}
 					});
 				}
-				catch(TwitterException e) {
+				catch(Exception e) {
 					stopTimer();
 					Log.d(getClass().getName(), "Stopping pulls! Unable to connect to the online service..");
 					
