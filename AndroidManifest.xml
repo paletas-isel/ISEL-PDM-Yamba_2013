@@ -37,7 +37,7 @@
         <activity
             android:name="pt.isel.pdm.yamba.views.LauncherActivity"
             android:noHistory="true"
-            android:label="@string/title_activity_launcher" >
+            android:label="@string/title_activity_launcher" android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,8 +47,8 @@
         
         <service android:enabled="true" android:name="pt.isel.pdm.yamba.twitter.services.StatusUploadService" />
         <service android:name="pt.isel.pdm.yamba.twitter.services.TimelinePullService"></service>
-        <service android:name="pt.isel.pdm.yamba.twitter.services.UserInfoPullService" ></service>
-        <activity android:name=".views.UserInfoActivity" android:label="@string/title_activity_userinfo"></activity>
+        <service android:name="pt.isel.pdm.yamba.twitter.services.UserInfoPullService" android:process="pt.isel.pdm.yamba.userinfopull"></service>
+        <activity android:name=".views.UserInfoActivity" android:label="@string/title_activity_userinfo" android:process="pt.isel.pdm.yamba.userinfopull"></activity>
         <provider android:authorities="@string/content_authority" android:name=".content.YambaTweetsProvider"></provider>
     </application>
 

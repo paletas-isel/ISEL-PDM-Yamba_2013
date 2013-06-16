@@ -54,7 +54,7 @@ public class StatusUploadService extends IntentService {
 			TimelineStatusDataSource source = new TimelineStatusDataSource(this);
 			source.open();
 			
-			source.createStatus(new TimelineStatus(-1, message, new Date(System.currentTimeMillis()), 1, false));
+			source.createStatus(new TimelineStatus(-1, TwitterAsync.getUsername(), message, new Date(System.currentTimeMillis()), 1, false));
 			
 			source.close();
 		}

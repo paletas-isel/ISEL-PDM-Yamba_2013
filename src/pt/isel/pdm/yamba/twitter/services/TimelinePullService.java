@@ -95,8 +95,6 @@ public class TimelinePullService extends YambaBaseService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	private final TwitterAsync _twitterAsync = TwitterAsync.connect();
 		
 	private Handler _handler = new Handler(); 
 	
@@ -111,65 +109,67 @@ public class TimelinePullService extends YambaBaseService {
 			public void run() {
 				Log.d(getClass().getName(), "Obtaining timeline from the service..");
 				
-				Twitter connection = _twitterAsync.getInnerConnection();
+				final TwitterAsync twitterAsync = TwitterAsync.connect();
+				Twitter connection = twitterAsync.getInnerConnection();
 				
 				_timeline = TimelineStatus.from(connection.getUserTimeline().subList(0, _viewModel.getMaxSavedTweets()));
 				
 				Log.d(getClass().getName(), "Timeline obtained, updating in memory statuses..");
+				
+				updateSavedStatus(_timeline, _viewModel.getMaxSavedTweets());
 										
 				_handler.post(new Thread() {
 					
 					@Override
-					public void run() {						  
-						updateSavedStatus(_timeline, _viewModel.getMaxSavedTweets());
+					public void run() {				  
 						
-						TimelineObtainedListener listener = _twitterAsync.getTimelineObtainedListener();
+						TimelineObtainedListener listener = twitterAsync.getTimelineObtainedListener();
 						if(listener != null && _timeline != null) {
 							listener.onTimelineObtained(_timeline);
 						}
 					}
-					
-					private void updateSavedStatus(Iterable<TimelineStatus> downloadedTimeline, int maxSaved) {
-						Log.d(getClass().getName(), String.format("Updating saved statuses (Max. Allowed %d)..", maxSaved));
-
-						List<TimelineStatus> timeline = _dataSource.getTimeline();
-						
-						if(!timeline.isEmpty()) {
-							TimelineStatus first = timeline.get(0);
-							int savedCount = saveStatuses(downloadedTimeline, first);
-							int totalSaved = timeline.size() + savedCount;
-							if(totalSaved > maxSaved)
-								deleteLastStatuses(timeline, maxSaved, totalSaved - savedCount);
-						}
-						else {
-							saveStatuses(downloadedTimeline, null);
-						}
-					}
-					
-					private int saveStatuses(Iterable<TimelineStatus> statuses, TimelineStatus lastSavedStatus) {
-						Log.d(getClass().getName(), "Saving new statuses..");
-						
-						int saved = 0;
-						for(TimelineStatus status : statuses) {
-							if(lastSavedStatus == null || status.getDate().compareTo(lastSavedStatus.getDate()) > 0) {
-								_dataSource.createStatus(status);
-								saved++;
-							}
-						}
-
-						Log.d(getClass().getName(), String.format("Saved new %d statuses!", saved));
-						
-						return saved;
-					}
-					
-					private void deleteLastStatuses(List<TimelineStatus> statuses, int maxSaved, int toDelete) {
-						Log.d(getClass().getName(), String.format("Deleting %d excess statuses..", toDelete));
-						for(TimelineStatus status : statuses.subList(statuses.size() - toDelete, statuses.size())) {
-							_dataSource.deleteStatus(status);
-						}
-					}
 				});
 			}		
+
+			private void updateSavedStatus(Iterable<TimelineStatus> downloadedTimeline, int maxSaved) {
+				Log.d(getClass().getName(), String.format("Updating saved statuses (Max. Allowed %d)..", maxSaved));
+
+				List<TimelineStatus> timeline = _dataSource.getTimeline();
+				
+				if(!timeline.isEmpty()) {
+					TimelineStatus first = timeline.get(0);
+					int savedCount = saveStatuses(downloadedTimeline, first);
+					int totalSaved = timeline.size() + savedCount;
+					if(totalSaved > maxSaved)
+						deleteLastStatuses(timeline, maxSaved, totalSaved - maxSaved);
+				}
+				else {
+					saveStatuses(downloadedTimeline, null);
+				}
+			}
+			
+			private int saveStatuses(Iterable<TimelineStatus> statuses, TimelineStatus lastSavedStatus) {
+				Log.d(getClass().getName(), "Saving new statuses..");
+				
+				int saved = 0;
+				for(TimelineStatus status : statuses) {
+					if(lastSavedStatus == null || status.getDate().compareTo(lastSavedStatus.getDate()) > 0) {
+						_dataSource.createStatus(status);
+						saved++;
+					}
+				}
+
+				Log.d(getClass().getName(), String.format("Saved new %d statuses!", saved));
+				
+				return saved;
+			}
+			
+			private void deleteLastStatuses(List<TimelineStatus> statuses, int maxSaved, int toDelete) {
+				Log.d(getClass().getName(), String.format("Deleting %d excess statuses..", toDelete));
+				for(TimelineStatus status : statuses.subList(statuses.size() - toDelete, statuses.size())) {
+					_dataSource.deleteStatus(status);
+				}
+			}
 		};
 	}
 	
@@ -195,7 +195,7 @@ public class TimelinePullService extends YambaBaseService {
 			}
 		}
 		
-		if(_timeline != null)  _twitterAsync.getTimelineObtainedListener().onTimelineObtained(_timeline);
+		if(_timeline != null)  TwitterAsync.connect().getTimelineObtainedListener().onTimelineObtained(_timeline);
 		return hasSavedTweets;
 	}
 	
