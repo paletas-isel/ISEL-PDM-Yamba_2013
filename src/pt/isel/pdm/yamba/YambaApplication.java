@@ -1,6 +1,5 @@
 package pt.isel.pdm.yamba;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -12,6 +11,7 @@ import pt.isel.pdm.yamba.settings.Settings;
 import pt.isel.pdm.yamba.twitter.TwitterAsync;
 import pt.isel.pdm.yamba.twitter.listeners.TwitterExceptionListener;
 import pt.isel.pdm.yamba.twitter.services.StatusUploadService;
+import pt.isel.pdm.yamba.twitter.services.TimelinePullService;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,7 +20,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 public class YambaApplication extends Application{
@@ -42,6 +41,13 @@ public class YambaApplication extends Application{
 				
 				serviceIntent.putExtra(StatusUploadService.Values.Intent.Type, StatusUploadService.Values.Intent.Op.PublishPending);
 				context.startService(serviceIntent);
+				
+				
+				//Restart timelinepullservice
+				Intent serviceTimelineIntent = new Intent(context, TimelinePullService.class);
+				
+				serviceTimelineIntent.putExtra(TimelinePullService.INTENT_CONNECTIVITY_RESTABLISHED, true);
+				context.startService(serviceTimelineIntent);	
 			}
 		}
 	};

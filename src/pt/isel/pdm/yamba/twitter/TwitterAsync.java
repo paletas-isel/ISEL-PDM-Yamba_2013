@@ -132,7 +132,7 @@ public class TwitterAsync {
 	}
 	
 	public synchronized TimelineObtainedListener getTimelineObtainedListener() {
-		return _timelineObtainedListener.get();
+		return _timelineObtainedListener != null ? _timelineObtainedListener.get() : null;
 	}
 	
 	public synchronized void clearTimelineObtainedListener() {

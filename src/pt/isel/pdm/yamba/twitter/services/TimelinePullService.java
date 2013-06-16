@@ -11,6 +11,7 @@ import pt.isel.pdm.yamba.twitter.TwitterAsync;
 import pt.isel.pdm.yamba.twitter.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
 import winterwell.jtwitter.Twitter;
+import winterwell.jtwitter.TwitterException;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
@@ -20,6 +21,8 @@ import android.util.Log;
 public class TimelinePullService extends YambaBaseService {
 
 	public final static String PARAM_TAG = "PARAM_TAG";
+	
+	public final static String INTENT_CONNECTIVITY_RESTABLISHED = "CONNECTIVITY_ONLINE";
 	
 	private Iterable<TimelineStatus> _timeline;	
 	private long _lastSchedule = 0;	
@@ -112,23 +115,29 @@ public class TimelinePullService extends YambaBaseService {
 				final TwitterAsync twitterAsync = TwitterAsync.connect();
 				Twitter connection = twitterAsync.getInnerConnection();
 				
-				_timeline = TimelineStatus.from(connection.getUserTimeline().subList(0, _viewModel.getMaxSavedTweets()));
-				
-				Log.d(getClass().getName(), "Timeline obtained, updating in memory statuses..");
-				
-				updateSavedStatus(_timeline, _viewModel.getMaxSavedTweets());
-										
-				_handler.post(new Thread() {
+				try {
+					_timeline = TimelineStatus.from(connection.getUserTimeline().subList(0, _viewModel.getMaxSavedTweets()));
 					
-					@Override
-					public void run() {				  
+					Log.d(getClass().getName(), "Timeline obtained, updating in memory statuses..");
+					
+					updateSavedStatus(_timeline, _viewModel.getMaxSavedTweets());
+											
+					_handler.post(new Thread() {
 						
-						TimelineObtainedListener listener = twitterAsync.getTimelineObtainedListener();
-						if(listener != null && _timeline != null) {
-							listener.onTimelineObtained(_timeline);
+						@Override
+						public void run() {				  
+							
+							TimelineObtainedListener listener = twitterAsync.getTimelineObtainedListener();
+							if(listener != null && _timeline != null) {
+								listener.onTimelineObtained(_timeline);
+							}
 						}
-					}
-				});
+					});
+				}
+				catch(TwitterException e) {
+					stopTimer();
+					Log.d(getClass().getName(), "Stopping pulls! Unable to connect to the online service..");
+				}
 			}		
 
 			private void updateSavedStatus(Iterable<TimelineStatus> downloadedTimeline, int maxSaved) {
@@ -176,7 +185,13 @@ public class TimelinePullService extends YambaBaseService {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {				
 		loadSavedTweets();		
-		startTimer();	
+		
+		if(intent.getBooleanExtra(INTENT_CONNECTIVITY_RESTABLISHED, false)) {
+			restartTimer();
+		}
+		else {
+			startTimer();	
+		}
 			
 		return Service.START_REDELIVER_INTENT;
 	}
@@ -192,14 +207,22 @@ public class TimelinePullService extends YambaBaseService {
 			}
 		}
 		
-		if(_timeline != null)  TwitterAsync.connect().getTimelineObtainedListener().onTimelineObtained(_timeline);
+		if(_timeline != null)  {
+			TimelineObtainedListener listener = TwitterAsync.connect().getTimelineObtainedListener();
+			if(listener != null)
+				listener.onTimelineObtained(_timeline);
+		}
 		return hasSavedTweets;
+	}
+	
+	private void stopTimer() {
+		_task.cancel();
+		_timer.purge();
 	}
 	
 	private void startTimer() {
 		if(_timer != null) {
-			_task.cancel();
-			_timer.purge();
+			stopTimer();
 		}
 		else {
 			_timer = new Timer();
@@ -213,6 +236,10 @@ public class TimelinePullService extends YambaBaseService {
 	}
 	
 	private void restartTimer() {
+		if(_timer == null) {
+			Log.d(getClass().getName(), "Service not yet started, cannot restart. (Start the service first)");
+			return;
+		}
 		startTimer();
 	}
 	
