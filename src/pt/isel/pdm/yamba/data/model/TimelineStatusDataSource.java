@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class TimelineStatusDataSource implements DatabaseTable {
 
-	public static final String[] COLUMNS = new String[] { "ID", "SERVERID", "MESSAGE", "PUBLICATION_DATE", "REPLY_TO", "PUBLISHED" };
+	public static final String[] COLUMNS = new String[] { "ID", "SERVERID", "AUTHOR", "MESSAGE", "PUBLICATION_DATE", "REPLY_TO", "PUBLISHED" };
 	public static final String TABLE_NAME = "Timeline";
 	
 	@Override
@@ -39,12 +39,14 @@ public class TimelineStatusDataSource implements DatabaseTable {
 
 	private static int ID_COLUMNIDX = 0;
 	private static int SERVERID_COLUMNIDX = 1;
-	private static int MESSAGE_COLUMNIDX = 2;
-	private static int PUBLICATIONDATE_COLUMNIDX = 3;
-	private static int REPLYTO_COLUMNIDX = 4;
-	private static int PUBLISHED_COLUMNIDX = 5;
+	private static int AUTHOR_COLUMNIDX = 2;
+	private static int MESSAGE_COLUMNIDX = 3;
+	private static int PUBLICATIONDATE_COLUMNIDX = 4;
+	private static int REPLYTO_COLUMNIDX = 5;
+	private static int PUBLISHED_COLUMNIDX = 6;
 	public static String ID_COLUMN = COLUMNS[ID_COLUMNIDX];
 	public static String SERVERID_COLUMN = COLUMNS[SERVERID_COLUMNIDX];
+	public static String AUTHOR_COLUMN = COLUMNS[AUTHOR_COLUMNIDX];
 	public static String MESSAGE_COLUMN = COLUMNS[MESSAGE_COLUMNIDX];
 	public static String PUBLICATIONDATE_COLUMN = COLUMNS[PUBLICATIONDATE_COLUMNIDX];
 	public static String REPLYTO_COLUMN = COLUMNS[REPLYTO_COLUMNIDX];
@@ -102,7 +104,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 		Cursor queryResult = _database.query(
 			getTableName(), 
 			getColumns(), 
-			null, 
+			"PUBLISHED = 1", 
 			null, 
 			null,
 			null,
@@ -124,6 +126,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 			status = new TimelineStatus
 			(
 				cursor.getLong(SERVERID_COLUMNIDX),
+				cursor.getString(AUTHOR_COLUMNIDX),
 				cursor.getString(MESSAGE_COLUMNIDX), 
 				df.parse(cursor.getString(PUBLICATIONDATE_COLUMNIDX)),
 				cursor.getInt(REPLYTO_COLUMNIDX),
@@ -133,6 +136,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 			status = new TimelineStatus
 			(
 				cursor.getLong(SERVERID_COLUMNIDX),
+				cursor.getString(AUTHOR_COLUMNIDX),
 				cursor.getString(MESSAGE_COLUMNIDX), 
 				new Date(),
 				cursor.getInt(REPLYTO_COLUMNIDX),
@@ -146,6 +150,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 	private static ContentValues getValues(TimelineStatus status) {
 		ContentValues values = new ContentValues();
 		values.put(SERVERID_COLUMN, status.getServerID());
+		values.put(AUTHOR_COLUMN, status.getUsername());
 		values.put(MESSAGE_COLUMN, status.getMessage());
 		values.put(PUBLICATIONDATE_COLUMN,  df.format(status.getDate()));
 		values.put(REPLYTO_COLUMN, status.getReplyTo());
