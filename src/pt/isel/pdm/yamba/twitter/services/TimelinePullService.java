@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import pt.isel.java.Action;
 import pt.isel.pdm.yamba.data.model.TimelineStatus;
 import pt.isel.pdm.yamba.data.model.TimelineStatusDataSource;
+import pt.isel.pdm.yamba.exceptions.ExceptionWrapper;
 import pt.isel.pdm.yamba.twitter.TwitterAsync;
 import pt.isel.pdm.yamba.twitter.listeners.TimelineObtainedListener;
 import pt.isel.pdm.yamba.views.models.TimelineViewModel;
@@ -111,10 +112,10 @@ public class TimelinePullService extends YambaBaseService {
 			@Override
 			public void run() {
 				Log.d(getClass().getName(), "Obtaining timeline from the service..");
-				
+
 				try {
-					
-					final TwitterAsync twitterAsync = TwitterAsync.connect();
+
+					final TwitterAsync twitterAsync = TwitterAsync.connect();				
 					Twitter connection = twitterAsync.getInnerConnection();
 				
 					_timeline = TimelineStatus.from(connection.getUserTimeline().subList(0, _viewModel.getMaxSavedTweets()));
@@ -138,6 +139,8 @@ public class TimelinePullService extends YambaBaseService {
 				catch(TwitterException e) {
 					stopTimer();
 					Log.d(getClass().getName(), "Stopping pulls! Unable to connect to the online service..");
+					
+					TwitterAsync.notifyException(new ExceptionWrapper(e));
 				}
 			}		
 

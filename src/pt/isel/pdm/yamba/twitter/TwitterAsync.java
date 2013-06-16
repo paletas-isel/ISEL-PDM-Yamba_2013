@@ -78,7 +78,7 @@ public class TwitterAsync {
 		_twitterExceptionListener = null;
 	}	
 	
-	static void notifyException(TwitterException e) {
+	public static void notifyException(TwitterException e) {
 		if(_twitterExceptionListener != null) {
 			_twitterExceptionListener.onExceptionThrown(e);
 		}
