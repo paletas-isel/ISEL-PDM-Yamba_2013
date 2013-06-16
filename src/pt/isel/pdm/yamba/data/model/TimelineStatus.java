@@ -15,19 +15,20 @@ public class TimelineStatus {
 	private long _replyTo;
 	private boolean _published;
 
-	public TimelineStatus(long serverId, String message, Date publicationDate) {
+	public TimelineStatus(long serverId, String username, String message, Date publicationDate) {
 		_serverId = serverId;
+		_username = username;
 		_message = message;
 		_publicationDate = publicationDate;
 	}
 	
-	public TimelineStatus(long serverId, String message, Date publicationDate, int replyTo) {
-		this(serverId, message, publicationDate);
+	public TimelineStatus(long serverId, String username, String message, Date publicationDate, int replyTo) {
+		this(serverId, username, message, publicationDate);
 		_replyTo = replyTo;
 	}
 	
-	public TimelineStatus(long serverId, String message, Date publicationDate, int replyTo, boolean published) {
-		this(serverId, message, publicationDate, replyTo);
+	public TimelineStatus(long serverId, String username, String message, Date publicationDate, int replyTo, boolean published) {
+		this(serverId, username, message, publicationDate, replyTo);
 		_published = published;
 	}
 	
@@ -88,12 +89,11 @@ public class TimelineStatus {
 	}
 	
 	public static TimelineStatus from(Twitter.Status status) {
-		TimelineStatus timelineStatus = new TimelineStatus(status.getId(), status.getText(), status.getCreatedAt());
+		TimelineStatus timelineStatus = new TimelineStatus(status.getId(), status.getUser().getName(), status.getText(), status.getCreatedAt());
 		if(status.inReplyToStatusId == null)
 			timelineStatus.setReplyTo(0);
 		else
 			timelineStatus.setReplyTo(status.inReplyToStatusId);
-		timelineStatus.setUsername(status.getUser().getName());
 		timelineStatus.setPublished(true);
 		return timelineStatus;
 	}

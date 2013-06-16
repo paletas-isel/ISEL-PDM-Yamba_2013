@@ -139,7 +139,7 @@ public class TimelinePullService extends YambaBaseService {
 							int savedCount = saveStatuses(downloadedTimeline, first);
 							int totalSaved = timeline.size() + savedCount;
 							if(totalSaved > maxSaved)
-								deleteLastStatuses(timeline, maxSaved, totalSaved - savedCount);
+								deleteLastStatuses(timeline, maxSaved, totalSaved - maxSaved);
 						}
 						else {
 							saveStatuses(downloadedTimeline, null);
