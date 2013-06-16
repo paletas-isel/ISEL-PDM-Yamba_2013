@@ -54,8 +54,8 @@ public class StatusViewModel {
 		Messenger messenger = new Messenger(handler);
 		
 		Intent intent = new Intent(_context, StatusUploadService.class);
-		intent.putExtra(StatusUploadService.Keys.Intent.Message, _message);
-		intent.putExtra(StatusUploadService.Keys.Intent.Messenger, messenger);
+		intent.putExtra(StatusUploadService.Values.Intent.Message, _message);
+		intent.putExtra(StatusUploadService.Values.Intent.Messenger, messenger);
 		
 		_context.startService(intent);
 	}

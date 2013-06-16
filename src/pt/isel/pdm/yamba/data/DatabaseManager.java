@@ -20,7 +20,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
 	
 	public DatabaseManager(Context context) {
 		super(context, DATABASE_NAME, null, CURRENT_VERSION.getVersion().toSQLiteVersion());
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

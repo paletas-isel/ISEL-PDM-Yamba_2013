@@ -1,17 +1,26 @@
 package pt.isel.pdm.yamba;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import pt.isel.android.content.SharedPreferencesListener;
+import pt.isel.android.net.Network;
 import pt.isel.java.Action;
 import pt.isel.pdm.yamba.exceptions.TwitterException;
 import pt.isel.pdm.yamba.settings.Settings;
 import pt.isel.pdm.yamba.twitter.TwitterAsync;
 import pt.isel.pdm.yamba.twitter.listeners.TwitterExceptionListener;
+import pt.isel.pdm.yamba.twitter.services.StatusUploadService;
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 public class YambaApplication extends Application{
@@ -22,9 +31,27 @@ public class YambaApplication extends Application{
 	
 	public static YambaApplication getApplication() { return _application; }
 	
+	private final BroadcastReceiver _connectivityBroadcastReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			if(Network.isNetworkAvailable(context)) {
+				
+				Intent serviceIntent = new Intent(context, StatusUploadService.class);
+				
+				serviceIntent.putExtra(StatusUploadService.Values.Intent.Type, StatusUploadService.Values.Intent.Op.PublishPending);
+				context.startService(serviceIntent);
+			}
+		}
+	};
+	
 	@Override
 	public void onCreate() {	
 
+		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
+		registerReceiver(_connectivityBroadcastReceiver, filter);
+		
 		_application = this;
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -67,5 +94,6 @@ public class YambaApplication extends Application{
 					.show();
 			}
 		});
+	
 	}
 }

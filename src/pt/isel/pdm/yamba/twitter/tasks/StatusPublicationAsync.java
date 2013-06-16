@@ -6,14 +6,16 @@ import pt.isel.pdm.yamba.twitter.helpers.StatusContainer;
 import pt.isel.pdm.yamba.twitter.listeners.StatusPublishedListener;
 import winterwell.jtwitter.Twitter;
 
-public class StatusPublicationAsync extends TwitterAsyncTask<StatusContainer, Twitter.Status, Void> {
-		
+public class StatusPublicationAsync extends TwitterAsyncTask<StatusContainer, Twitter.Status, Integer> {
+	
+	public static final int Published = 0, Failed = 1;
+	
 	public StatusPublicationAsync(TwitterAsync connection) {
 		super(connection);
 	}
 
 	@Override
-	protected Void doExecute(StatusContainer... params) {
+	protected Integer doExecute(StatusContainer... params) {
 		Twitter connection = getConnection();
 		
 		for(StatusContainer status : params) {
@@ -28,7 +30,7 @@ public class StatusPublicationAsync extends TwitterAsyncTask<StatusContainer, Tw
 			publishProgress(s);
 		}
 		
-		return null;
+		return (getInnerException() == null)?Published:Failed;
 	}
 
 	@Override
@@ -44,5 +46,4 @@ public class StatusPublicationAsync extends TwitterAsyncTask<StatusContainer, Tw
 		
 		super.onProgressUpdate(values);
 	}
-
 }

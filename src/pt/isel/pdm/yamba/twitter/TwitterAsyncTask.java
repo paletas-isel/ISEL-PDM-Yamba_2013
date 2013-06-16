@@ -61,6 +61,10 @@ public abstract class TwitterAsyncTask<A, B, C> extends AsyncTask<A, B, C>{
 		}
 	}
 
+	protected TwitterException getInnerException() {
+		return _innerException;
+	}
+	
 	protected abstract C doExecute(A... arg0);
 	protected void doPostExecute(C result) {};
 }

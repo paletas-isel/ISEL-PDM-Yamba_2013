@@ -100,6 +100,10 @@ public class TwitterAsync {
 	}	
 	
 	public synchronized StatusPublishedListener getStatusPublishedListener() {
+		
+		if(_statusPublishedListener == null)
+			return null;
+		
 		return _statusPublishedListener.get();
 	}
 	
@@ -110,7 +114,7 @@ public class TwitterAsync {
 			.execute(new StatusContainer(statusText, inReplyToStatusId));		
 	}
 
-	public AsyncTask<?, ?, ?> updateStatusAsync(Context context, String statusText) {		
+	public AsyncTask<?, ?, Integer> updateStatusAsync(Context context, String statusText) {		
 
 		return new StatusPublicationAsync(this)
 			.execute(new StatusContainer(statusText));		

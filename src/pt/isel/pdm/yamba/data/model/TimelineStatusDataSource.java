@@ -99,16 +99,25 @@ public class TimelineStatusDataSource implements DatabaseTable {
 	}
 
 	public List<TimelineStatus> getTimeline() {
-		Cursor queryResult = _database.query(
-			getTableName(), 
-			getColumns(), 
-			null, 
-			null, 
-			null,
-			null,
-			TimelineStatusDataSource.PUBLICATIONDATE_COLUMN + " DESC"
-		);
+		return getStatus(true);
+	}
+	
+	public List<TimelineStatus> getUnpublishedStatuses() {
+		return getStatus(false);
+	}
+	
+	private List<TimelineStatus> getStatus(boolean published) {
 		
+		Cursor queryResult = _database.query(
+				getTableName(), 
+				getColumns(), 
+				String.format("%s=%s", PUBLISHED_COLUMN, (published)?1:0), 
+				null, 
+				null,
+				null,
+				TimelineStatusDataSource.PUBLICATIONDATE_COLUMN + " DESC"
+			);
+			
 		List<TimelineStatus> timeline = new ArrayList<TimelineStatus>();
 		while(queryResult.moveToNext()) {
 			timeline.add(TimelineStatusDataSource.cursorToStatus(queryResult));
@@ -117,7 +126,7 @@ public class TimelineStatusDataSource implements DatabaseTable {
 		
 		return timeline;
 	}
-
+	
 	private static TimelineStatus cursorToStatus(Cursor cursor) {
 		TimelineStatus status;
 		try {
