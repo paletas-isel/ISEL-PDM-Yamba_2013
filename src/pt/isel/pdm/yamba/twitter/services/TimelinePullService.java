@@ -175,10 +175,7 @@ public class TimelinePullService extends YambaBaseService {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {				
-		if(loadSavedTweets()) {
-			_viewModel.getAutoRefreshRate();
-		}
-		
+		loadSavedTweets();		
 		startTimer();	
 			
 		return Service.START_REDELIVER_INTENT;
