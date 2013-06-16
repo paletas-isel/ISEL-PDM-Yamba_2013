@@ -41,8 +41,11 @@ public class StatusViewModel {
 		return _statusMaxSize - _message.length();
 	}
 	
-
 	public void sendStatusCommandAsync(final Action<Status> callback) {
+		
+		if(_message == null || getRemainingCharacters() < 0) {
+			return;
+		}
 		
 		Handler handler = new Handler() {
 			@Override
